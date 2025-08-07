@@ -1,0 +1,36 @@
+﻿{
+  "WorkspacesConfiguration": {
+    "WorkspaceNamePrefix": "ResolveUnitWs",
+    "WorkspaceCount": 100,
+    "CapacityObjectId": "51D7A0D5-C4F9-4B26-B8BD-899BB0FC0141",
+    "WorkspaceArtifactsByType": [
+      {
+        "Type": "VariableLibrary",
+        "Items": [
+          {
+            "Count": 1,
+            "Definition": ".\\Creation\\VariableLibraryDefinition.json"
+          },
+          {
+            "Count": 1,
+            "Definition": ".\\Creation\\VariableLibraryDefinition.json"
+          },
+          {
+            "Count": 1,
+            "Definition": ".\\Creation\\VariableLibraryDefinition.json"
+          }
+        ]
+      },
+      {
+        "Type": "Lakehouse",
+        "Items": [
+          {
+            "Count": 1
+          }
+        ]
+      }
+    ]
+  },
+  "DeploymentPipelinesConfiguration": {
+  }
+}

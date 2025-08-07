@@ -1,0 +1,92 @@
+﻿{
+  "$(/**/VariableLibrary1/aa)": {
+    "status": "Ok",
+    "type": "Boolean",
+    "value": true
+  },
+  "$(/**/VariableLibrary1/bb)": {
+    "status": "Ok",
+    "type": "DateTime",
+    "value": "2025-01-14T16:15:20.123Z"
+  },
+  "$(/**/VariableLibrary1/cc)": {
+    "status": "Ok",
+    "type": "Guid",
+    "value": "0f206279-91e4-4b38-9690-1e5c13f231b5"
+  },
+  "$(/**/VariableLibrary1/dd)": {
+    "status": "Ok",
+    "type": "Number",
+    "value": 2.3
+  },
+  "$(/**/VariableLibrary1/ee)": {
+    "status": "Ok",
+    "type": "String",
+    "value": "abc"
+  },
+  "$(/**/VariableLibrary1/test)": {
+    "status": "Ok",
+    "type": "Integer",
+    "value": 22
+  },
+  "$(/**/VariableLibrary2/aa)": {
+    "status": "Ok",
+    "type": "Boolean",
+    "value": true
+  },
+  "$(/**/VariableLibrary2/bb)": {
+    "status": "Ok",
+    "type": "DateTime",
+    "value": "2025-01-14T16:15:20.123Z"
+  },
+  "$(/**/VariableLibrary2/cc)": {
+    "status": "Ok",
+    "type": "Guid",
+    "value": "0f206279-91e4-4b38-9690-1e5c13f231b5"
+  },
+  "$(/**/VariableLibrary2/dd)": {
+    "status": "Ok",
+    "type": "Number",
+    "value": 2.3
+  },
+  "$(/**/VariableLibrary2/ee)": {
+    "status": "Ok",
+    "type": "String",
+    "value": "abc"
+  },
+  "$(/**/VariableLibrary2/test)": {
+    "status": "Ok",
+    "type": "Integer",
+    "value": 22
+  },
+  "$(/**/VariableLibrary3/aa)": {
+    "status": "Ok",
+    "type": "Boolean",
+    "value": true
+  },
+  "$(/**/VariableLibrary3/bb)": {
+    "status": "Ok",
+    "type": "DateTime",
+    "value": "2025-01-14T16:15:20.123Z"
+  },
+  "$(/**/VariableLibrary3/cc)": {
+    "status": "Ok",
+    "type": "Guid",
+    "value": "0f206279-91e4-4b38-9690-1e5c13f231b5"
+  },
+  "$(/**/VariableLibrary3/dd)": {
+    "status": "Ok",
+    "type": "Number",
+    "value": 2.3
+  },
+  "$(/**/VariableLibrary3/ee)": {
+    "status": "Ok",
+    "type": "String",
+    "value": "abc"
+  },
+  "$(/**/VariableLibrary3/test)": {
+    "status": "Ok",
+    "type": "Integer",
+    "value": 22
+  }
+}

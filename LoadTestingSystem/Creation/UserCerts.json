@@ -1,0 +1,507 @@
+[
+  {
+    "userName": "Admin1CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "Admin1CBA-FabricESshared05PPE-Cert",
+    "userId": "a70fca3b-867d-45c4-a2ba-c3e948d07021"
+  },
+  {
+    "userName": "AutoUser1CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser1CBA-FabricESshared05PPE-Cert",
+    "userId": "cea31fc7-63bc-46cd-8344-46627abdb059"
+  },
+  {
+    "userName": "AutoUser2CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser2CBA-FabricESshared05PPE-Cert",
+    "userId": "7c6f9ab7-36fe-4ff4-a21d-c90568740636"
+  },
+  {
+    "userName": "AutoUser3CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser3CBA-FabricESshared05PPE-Cert",
+    "userId": "3f464633-aaa8-48cd-8483-daa25e4d387b"
+  },
+  {
+    "userName": "AutoUser4CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser4CBA-FabricESshared05PPE-Cert",
+    "userId": "78b247e8-cb88-471b-860d-60abb3037e15"
+  },
+  {
+    "userName": "AutoUser5CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser5CBA-FabricESshared05PPE-Cert",
+    "userId": "a0a54830-89ef-4f2d-b16d-27aa7a7cf73f"
+  },
+  {
+    "userName": "AutoUser6CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser6CBA-FabricESshared05PPE-Cert",
+    "userId": "8b9e1efe-e018-4956-84e0-9f3ad2c7a662"
+  },
+  {
+    "userName": "AutoUser7CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser7CBA-FabricESshared05PPE-Cert",
+    "userId": "c5e4d881-c4b5-49e2-a8f0-62f69b60690c"
+  },
+  {
+    "userName": "AutoUser8CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser8CBA-FabricESshared05PPE-Cert",
+    "userId": "080e250e-58d6-4d5b-978b-96c6a71383e1"
+  },
+  {
+    "userName": "AutoUser9CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser9CBA-FabricESshared05PPE-Cert",
+    "userId": "84d09d0b-9212-4c87-9e71-7c54b132511d"
+  },
+  {
+    "userName": "AutoUser10CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser10CBA-FabricESshared05PPE-Cert",
+    "userId": "23d8a0c7-592e-44c6-9f00-e875b7802e82"
+  },
+  {
+    "userName": "AutoUser11CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser11CBA-FabricESshared05PPE-Cert",
+    "userId": "14b3f8b5-b877-44f7-89e9-4856dba7c73d"
+  },
+  {
+    "userName": "AutoUser12CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser12CBA-FabricESshared05PPE-Cert",
+    "userId": "fd1e27b6-eb04-46c0-810e-b99309aef0da"
+  },
+  {
+    "userName": "AutoUser13CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser13CBA-FabricESshared05PPE-Cert",
+    "userId": "e026e57a-a807-4fa8-866b-58ca493f69ff"
+  },
+  {
+    "userName": "AutoUser14CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser14CBA-FabricESshared05PPE-Cert",
+    "userId": "f82a68a8-79d1-4622-87df-1c010fe8bdb1"
+  },
+  {
+    "userName": "AutoUser15CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser15CBA-FabricESshared05PPE-Cert",
+    "userId": "0c1727cf-9b81-467f-b2b7-3975e61226cd"
+  },
+  {
+    "userName": "AutoUser16CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser16CBA-FabricESshared05PPE-Cert",
+    "userId": "cfc9390e-c8ed-4c14-babe-ae55127bd2f8"
+  },
+  {
+    "userName": "AutoUser17CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser17CBA-FabricESshared05PPE-Cert",
+    "userId": "3ed6c058-a3b0-4ca0-9d1c-b71912482fdf"
+  },
+  {
+    "userName": "AutoUser18CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser18CBA-FabricESshared05PPE-Cert",
+    "userId": "e44f17bb-6b18-4410-9517-46755630904f"
+  },
+  {
+    "userName": "AutoUser19CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser19CBA-FabricESshared05PPE-Cert",
+    "userId": "6bf0b83e-9b1b-46bd-9c65-dafcbe8ea135"
+  },
+  {
+    "userName": "AutoUser20CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser20CBA-FabricESshared05PPE-Cert",
+    "userId": "f1fcfc07-5284-4ef3-993f-1baf739d8807"
+  },
+  {
+    "userName": "AutoUser21CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser21CBA-FabricESshared05PPE-Cert",
+    "userId": "6cf57e63-9b39-45fd-8c54-965ff2219db2"
+  },
+  {
+    "userName": "AutoUser22CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser22CBA-FabricESshared05PPE-Cert",
+    "userId": "8e1d8ff5-d6cf-460c-bbfc-be65359a3b06"
+  },
+  {
+    "userName": "AutoUser23CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser23CBA-FabricESshared05PPE-Cert",
+    "userId": "9c6e9d1a-7936-4186-acd9-753870b03ed9"
+  },
+  {
+    "userName": "AutoUser24CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser24CBA-FabricESshared05PPE-Cert",
+    "userId": "15709e5e-6488-463c-a363-d8906d8ae828"
+  },
+  {
+    "userName": "AutoUser25CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser25CBA-FabricESshared05PPE-Cert",
+    "userId": "a2fc5c1f-17ab-4b4f-b808-3acd8e35d95e"
+  },
+  {
+    "userName": "AutoUser26CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser26CBA-FabricESshared05PPE-Cert",
+    "userId": "b4f0c3b6-8435-4d4c-8a04-7c0a3db37f60"
+  },
+  {
+    "userName": "AutoUser27CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser27CBA-FabricESshared05PPE-Cert",
+    "userId": "d943199b-688f-4baa-ad29-055fc8835e69"
+  },
+  {
+    "userName": "AutoUser28CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser28CBA-FabricESshared05PPE-Cert",
+    "userId": "e32fc010-94f2-4f2d-aecc-9add6cb82a22"
+  },
+  {
+    "userName": "AutoUser29CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser29CBA-FabricESshared05PPE-Cert",
+    "userId": "da94b107-87b0-41ee-92b1-3fe1eb5aee4b"
+  },
+  {
+    "userName": "AutoUser30CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser30CBA-FabricESshared05PPE-Cert",
+    "userId": "291e87c4-42b9-41d2-8876-bbf2e8e35af7"
+  },
+  {
+    "userName": "AutoUser31CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser31CBA-FabricESshared05PPE-Cert",
+    "userId": "9eb49a45-b409-4d40-b5c1-1b24700836de"
+  },
+  {
+    "userName": "AutoUser32CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser32CBA-FabricESshared05PPE-Cert",
+    "userId": "ba4cfb9b-781c-4c25-8331-6f3662a52717"
+  },
+  {
+    "userName": "AutoUser33CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser33CBA-FabricESshared05PPE-Cert",
+    "userId": "76c7b7bc-d2d3-45e0-9931-820d82e105a7"
+  },
+  {
+    "userName": "AutoUser34CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser34CBA-FabricESshared05PPE-Cert",
+    "userId": "32f43d4e-7e36-42a5-b516-a80cfed3e886"
+  },
+  {
+    "userName": "AutoUser35CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser35CBA-FabricESshared05PPE-Cert",
+    "userId": "72586be3-86e9-4232-93d0-95cbf4e130c9"
+  },
+  {
+    "userName": "AutoUser36CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser36CBA-FabricESshared05PPE-Cert",
+    "userId": "6afb4885-cec8-4c6c-ae8b-ff461a0b9cb3"
+  },
+  {
+    "userName": "AutoUser37CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser37CBA-FabricESshared05PPE-Cert",
+    "userId": "4dd60f38-1e81-4b1d-9fe4-17a179c4e67c"
+  },
+  {
+    "userName": "AutoUser38CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser38CBA-FabricESshared05PPE-Cert",
+    "userId": "598aa301-ed0f-429f-b4e6-20e14772789b"
+  },
+  {
+    "userName": "AutoUser39CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser39CBA-FabricESshared05PPE-Cert",
+    "userId": "2ea3e120-a033-4459-ae08-d45b9afbc18b"
+  },
+  {
+    "userName": "AutoUser40CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser40CBA-FabricESshared05PPE-Cert",
+    "userId": "5500c4e7-253d-48de-afaf-395a7786302e"
+  },
+  {
+    "userName": "AutoUser41CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser41CBA-FabricESshared05PPE-Cert",
+    "userId": "be5eec2d-94d5-4295-8001-0fa8461787c5"
+  },
+  {
+    "userName": "AutoUser42CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser42CBA-FabricESshared05PPE-Cert",
+    "userId": "01a8206d-c2f3-4167-9b13-0d840ddf4e49"
+  },
+  {
+    "userName": "AutoUser43CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser43CBA-FabricESshared05PPE-Cert",
+    "userId": "54992f64-cc15-4806-87c5-c7d54e38e9ef"
+  },
+  {
+    "userName": "AutoUser44CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser44CBA-FabricESshared05PPE-Cert",
+    "userId": "651b37fd-1aa7-41c0-ba6c-d0169d8e2b8d"
+  },
+  {
+    "userName": "AutoUser45CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser45CBA-FabricESshared05PPE-Cert",
+    "userId": "bc9bc691-1b9c-41e2-94e9-ebc96c7d2758"
+  },
+  {
+    "userName": "AutoUser46CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser46CBA-FabricESshared05PPE-Cert",
+    "userId": "451c0a00-ea6b-4bb9-8fb4-dabb707ed388"
+  },
+  {
+    "userName": "AutoUser47CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser47CBA-FabricESshared05PPE-Cert",
+    "userId": "5ba72e67-dc00-4787-ac45-7ad051a92e15"
+  },
+  {
+    "userName": "AutoUser48CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser48CBA-FabricESshared05PPE-Cert",
+    "userId": "228345e9-6d9c-4d5f-8703-92a7ddd5fe14"
+  },
+  {
+    "userName": "AutoUser49CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser49CBA-FabricESshared05PPE-Cert",
+    "userId": "026cfda6-fa28-4538-ab38-5eb468a980c1"
+  },
+  {
+    "userName": "AutoUser50CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser50CBA-FabricESshared05PPE-Cert",
+    "userId": "0ec05c15-5af1-4c70-add9-ee78dddfc2e6"
+  },
+  {
+    "userName": "AutoUser51CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser51CBA-FabricESshared05PPE-Cert",
+    "userId": "85a7f075-37f3-4499-9735-ff4214b79a27"
+  },
+  {
+    "userName": "AutoUser52CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser52CBA-FabricESshared05PPE-Cert",
+    "userId": "1a98fd8d-a7e0-489c-bb75-1a58c1b31be6"
+  },
+  {
+    "userName": "AutoUser53CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser53CBA-FabricESshared05PPE-Cert",
+    "userId": "9673d078-d8b6-4bd2-8c4f-ff175e323c2a"
+  },
+  {
+    "userName": "AutoUser54CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser54CBA-FabricESshared05PPE-Cert",
+    "userId": "59a02686-bfcb-421e-a970-43f3ba3b795e"
+  },
+  {
+    "userName": "AutoUser55CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser55CBA-FabricESshared05PPE-Cert",
+    "userId": "e5de9080-b9b2-44a5-8a71-3c3de062e49f"
+  },
+  {
+    "userName": "AutoUser56CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser56CBA-FabricESshared05PPE-Cert",
+    "userId": "e8ac84fd-3ba4-453f-8971-0d3b57cc7549"
+  },
+  {
+    "userName": "AutoUser57CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser57CBA-FabricESshared05PPE-Cert",
+    "userId": "04222072-b9a0-4089-b79c-920f356cc82f"
+  },
+  {
+    "userName": "AutoUser58CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser58CBA-FabricESshared05PPE-Cert",
+    "userId": "a6c1baf0-8641-4e74-a1f1-818d0cb4184b"
+  },
+  {
+    "userName": "AutoUser59CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser59CBA-FabricESshared05PPE-Cert",
+    "userId": "1a7aab2c-45cb-4935-a6a3-a659d258b7b8"
+  },
+  {
+    "userName": "AutoUser60CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser60CBA-FabricESshared05PPE-Cert",
+    "userId": "8eea613e-1253-4f79-9e6b-8b4179697374"
+  },
+  {
+    "userName": "AutoUser61CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser61CBA-FabricESshared05PPE-Cert",
+    "userId": "2361f52e-d5c2-424f-bab1-09e62dad1303"
+  },
+  {
+    "userName": "AutoUser62CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser62CBA-FabricESshared05PPE-Cert",
+    "userId": "02a3ad9d-996f-4b31-a9a5-670b506729a5"
+  },
+  {
+    "userName": "AutoUser63CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser63CBA-FabricESshared05PPE-Cert",
+    "userId": "6621c102-50e1-4d7d-9d38-3c0d55d804dd"
+  },
+  {
+    "userName": "AutoUser64CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser64CBA-FabricESshared05PPE-Cert",
+    "userId": "bb21e697-59d5-4391-bbc7-f19ba95a9c9b"
+  },
+  {
+    "userName": "AutoUser65CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser65CBA-FabricESshared05PPE-Cert",
+    "userId": "503a3f8b-965c-41a5-bf55-ef20c1636b8c"
+  },
+  {
+    "userName": "AutoUser66CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser66CBA-FabricESshared05PPE-Cert",
+    "userId": "8de09a37-d685-49f1-a46b-c51f4b709d10"
+  },
+  {
+    "userName": "AutoUser67CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser67CBA-FabricESshared05PPE-Cert",
+    "userId": "c1363c8e-3025-403f-a155-de8e63064b7b"
+  },
+  {
+    "userName": "AutoUser68CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser68CBA-FabricESshared05PPE-Cert",
+    "userId": "e625e032-dda7-45b4-a344-42f794c0a19d"
+  },
+  {
+    "userName": "AutoUser69CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser69CBA-FabricESshared05PPE-Cert",
+    "userId": "71405fce-32a0-46c8-8f67-5841f7e99d07"
+  },
+  {
+    "userName": "AutoUser70CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser70CBA-FabricESshared05PPE-Cert",
+    "userId": "d8260296-d879-4bdf-ad10-ab4d98e19134"
+  },
+  {
+    "userName": "AutoUser71CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser71CBA-FabricESshared05PPE-Cert",
+    "userId": "52432864-bdde-46c5-b3c3-1f9b9c7c9f9c"
+  },
+  {
+    "userName": "AutoUser72CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser72CBA-FabricESshared05PPE-Cert",
+    "userId": "7030f87e-18d2-4c66-b59a-bec2be15103a"
+  },
+  {
+    "userName": "AutoUser73CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser73CBA-FabricESshared05PPE-Cert",
+    "userId": "58403bd0-2315-4dad-8371-bb184760f368"
+  },
+  {
+    "userName": "AutoUser74CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser74CBA-FabricESshared05PPE-Cert",
+    "userId": "3cf3a07f-c9db-4c60-8c3f-dc4b415cd526"
+  },
+  {
+    "userName": "AutoUser75CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser75CBA-FabricESshared05PPE-Cert",
+    "userId": "6d41bc2e-498f-4598-b6c6-a1f3281efba1"
+  },
+  {
+    "userName": "AutoUser76CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser76CBA-FabricESshared05PPE-Cert",
+    "userId": "308e2758-6b41-452a-b302-95455c232408"
+  },
+  {
+    "userName": "AutoUser77CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser77CBA-FabricESshared05PPE-Cert",
+    "userId": "099fa5db-7cf6-4b98-98e6-762cd8a5db7f"
+  },
+  {
+    "userName": "AutoUser78CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser78CBA-FabricESshared05PPE-Cert",
+    "userId": "043e10e3-b047-40ef-83cc-8aa5000b5723"
+  },
+  {
+    "userName": "AutoUser79CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser79CBA-FabricESshared05PPE-Cert",
+    "userId": "d4314eaf-6502-4ab7-9986-3f291bba17be"
+  },
+  {
+    "userName": "AutoUser80CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser80CBA-FabricESshared05PPE-Cert",
+    "userId": "a39acf3a-fa11-4a10-a0d2-178e009cc340"
+  },
+  {
+    "userName": "AutoUser81CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser81CBA-FabricESshared05PPE-Cert",
+    "userId": "dfdcbedb-19be-4fd7-b6b0-3719ea930caa"
+  },
+  {
+    "userName": "AutoUser82CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser82CBA-FabricESshared05PPE-Cert",
+    "userId": "d28e6fcb-0519-48ce-9502-7c433d3107e9"
+  },
+  {
+    "userName": "AutoUser83CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser83CBA-FabricESshared05PPE-Cert",
+    "userId": "8d492fd0-41e3-4feb-a953-40aa00cca4f4"
+  },
+  {
+    "userName": "AutoUser84CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser84CBA-FabricESshared05PPE-Cert",
+    "userId": "281aa7a5-5d5c-461b-abcf-dc5829ce6c0d"
+  },
+  {
+    "userName": "AutoUser85CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser85CBA-FabricESshared05PPE-Cert",
+    "userId": "084340dc-f9bd-4a82-b06d-0742f2443861"
+  },
+  {
+    "userName": "AutoUser86CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser86CBA-FabricESshared05PPE-Cert",
+    "userId": "56fb6763-a925-4b3c-b149-54d661858ce8"
+  },
+  {
+    "userName": "AutoUser87CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser87CBA-FabricESshared05PPE-Cert",
+    "userId": "97dbdd8c-ddb0-4dc1-bb47-1bcf6b89cb50"
+  },
+  {
+    "userName": "AutoUser88CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser88CBA-FabricESshared05PPE-Cert",
+    "userId": "dfecffd6-6572-4ed0-bb72-19a4f3b84c22"
+  },
+  {
+    "userName": "AutoUser89CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser89CBA-FabricESshared05PPE-Cert",
+    "userId": "a332fc9f-2941-4d29-a5e0-d8d8a898aa4f"
+  },
+  {
+    "userName": "AutoUser90CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser90CBA-FabricESshared05PPE-Cert",
+    "userId": "957adf4c-79bd-49c0-823a-02b11333b923"
+  },
+  {
+    "userName": "AutoUser91CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser91CBA-FabricESshared05PPE-Cert",
+    "userId": "d105e1dd-43e5-4d0f-a502-d5dcc2f5a371"
+  },
+  {
+    "userName": "AutoUser92CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser92CBA-FabricESshared05PPE-Cert",
+    "userId": "55a05421-ecf6-484d-ae0b-09843f8be1c8"
+  },
+  {
+    "userName": "AutoUser93CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser93CBA-FabricESshared05PPE-Cert",
+    "userId": "e8ef7d10-ace5-4bbb-90b1-693ba41321f6"
+  },
+  {
+    "userName": "AutoUser94CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser94CBA-FabricESshared05PPE-Cert",
+    "userId": "860876a6-f77d-4c7d-a525-f58b896407b9"
+  },
+  {
+    "userName": "AutoUser95CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser95CBA-FabricESshared05PPE-Cert",
+    "userId": "4cb65ab5-b2cb-4d9f-8b26-be5a038b765d"
+  },
+  {
+    "userName": "AutoUser96CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser96CBA-FabricESshared05PPE-Cert",
+    "userId": "53469912-f22e-435d-8006-22df85cdad66"
+  },
+  {
+    "userName": "AutoUser97CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser97CBA-FabricESshared05PPE-Cert",
+    "userId": "42d2e9ed-b3b3-419a-8bd2-bbcb4efb53ae"
+  },
+  {
+    "userName": "AutoUser98CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser98CBA-FabricESshared05PPE-Cert",
+    "userId": "4ba03cf3-95b9-45a6-ab29-814bcc3d623b"
+  },
+  {
+    "userName": "AutoUser99CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser99CBA-FabricESshared05PPE-Cert",
+    "userId": "5b970172-331d-4e1a-87a7-0c57e03a8f0d"
+  },
+  {
+    "userName": "AutoUser100CBA@FabricESshared05PPE.ccsctp.net",
+    "certificateName": "AutoUser100CBA-FabricESshared05PPE-Cert",
+    "userId": "b54fec0e-7d6d-4bd7-898b-575d46befdb8"
+  }
+]

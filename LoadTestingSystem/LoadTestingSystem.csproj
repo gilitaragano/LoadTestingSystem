@@ -1,0 +1,70 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.14.2" />
+    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.8.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.73.1" />
+    <PackageReference Include="Microsoft.Identity.Client.TestOnlySilentCBA" Version="0.10.6" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.9.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Tests\LoadUnits\Config\Resolve\Actions\PrepareWorkspaceIdList.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Creation\UserCerts.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Tests\LoadUnits\Config\Resolve\Validations\ResolvedVariablesForValidation.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Tests\LoadUnits\Config\Resolve\Creation\ResolveLoadUnitPreparationConfiguration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Tests\LoadUnits\Config\Resolve\Creation\VariableLibraryDefinitions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Creation\LoadTestConfiguration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Tests\LoadUnits\Config\Resolve\ResolveLoadUnitLiveSessionConfiguration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Tests\LoadUnits\DeploymentPipelines\CalculateDiff\Creation\CalculateDiffLoadUnitPreparationConfiguration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Tests\LoadUnits\DeploymentPipelines\CalculateDiff\Creation\ReportDefinitions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Tests\LoadUnits\DeploymentPipelines\CalculateDiff\CalculateDiffLoadUnitLiveSessionConfiguration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Tests\LoadUnits\PublicApis\GetItems\GetItemsLoadUnitLiveSessionBaselineConfiguration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Tests\LoadUnits\PublicApis\GetItems\GetItemsLoadUnitLiveSessionConfiguration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Tests\LoadUnits\PublicApis\GetItems\Creation\GetItemsLoadUnitPreparationConfiguration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Tests\LoadUnits\PublicApis\GetItems\Creation\ReportDefinitions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Tests\LoadTests\" />
+  </ItemGroup>
+
+</Project>

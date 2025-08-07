@@ -1,0 +1,24 @@
+﻿{
+  "WorkspacesConfiguration": {
+    "WorkspaceNamePrefix": "AutoWS218",
+    "WorkspaceCount": 4,
+    "CapacityObjectId": "51D7A0D5-C4F9-4B26-B8BD-899BB0FC0141",
+    "WorkspaceArtifactsByType": [
+      {
+        "Type": "ReportAndSemanticModel",
+        "ArtifactNamePrefix": "ReportAndSemanticModel",
+        "Items": [
+          {
+            "Count": 1,
+            "Definition": ".\\Creation\\ReportDefinition.json"
+          }
+        ]
+      }
+    ]
+  },
+  "DeploymentPipelinesConfiguration": {
+    "PipelineNamePrefix": "AutoPipeline218",
+    "PipelineCount": 2,
+    "StageCount": 2
+  }
+}

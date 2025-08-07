@@ -1,0 +1,21 @@
+﻿{
+  "WorkspacesConfiguration": {
+    "WorkspaceNamePrefix": "AutoWS300",
+    "WorkspaceCount": 100,
+    "CapacityObjectId": "51D7A0D5-C4F9-4B26-B8BD-899BB0FC0141",
+    "WorkspaceArtifactsByType": [
+      {
+        "Type": "ReportAndSemanticModel",
+        "ArtifactNamePrefix": "ReportAndSemanticModel",
+        "Items": [
+          {
+            "Count": 3,
+            "Definition": ".\\Creation\\ReportDefinition.json"
+          }
+        ]
+      }
+    ]
+  },
+  "DeploymentPipelinesConfiguration": {
+  }
+}

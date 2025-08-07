@@ -1,0 +1,33 @@
+{
+  "artifactEntries": [
+    {
+      "type": "VariableLibrary",
+      "artifactDefinitions": [
+        {
+          "parts": [
+            {
+              "path": "variables.json",
+              "payload": "ew0KICAiJHNjaGVtYSI6ICJodHRwczovL2RldmVsb3Blci5taWNyb3NvZnQuY29tL2pzb24tc2NoZW1hcy9mYWJyaWMvaXRlbS92YXJpYWJsZUxpYnJhcnkvZGVmaW5pdGlvbi92YXJpYWJsZXMvMS4wLjAvc2NoZW1hLmpzb24iLA0KICAidmFyaWFibGVzIjogWw0KICAgIHsNCiAgICAgICJuYW1lIjogInRlc3QiLA0KICAgICAgIm5vdGUiOiAiIiwNCiAgICAgICJ0eXBlIjogIkludGVnZXIiLA0KICAgICAgInZhbHVlIjogMjINCiAgICB9LA0KICAgIHsNCiAgICAgICJuYW1lIjogImFhIiwNCiAgICAgICJub3RlIjogIiIsDQogICAgICAidHlwZSI6ICJCb29sZWFuIiwNCiAgICAgICJ2YWx1ZSI6IHRydWUNCiAgICB9LA0KICAgIHsNCiAgICAgICJuYW1lIjogImJiIiwNCiAgICAgICJub3RlIjogIiIsDQogICAgICAidHlwZSI6ICJEYXRlVGltZSIsDQogICAgICAidmFsdWUiOiAiMjAyNS0wMS0xNFQxNjoxNToyMC4xMjNaIg0KICAgIH0sDQogICAgew0KICAgICAgIm5hbWUiOiAiY2MiLA0KICAgICAgIm5vdGUiOiAiIiwNCiAgICAgICJ0eXBlIjogIkd1aWQiLA0KICAgICAgInZhbHVlIjogIjBmMjA2Mjc5LTkxZTQtNGIzOC05NjkwLTFlNWMxM2YyMzFiNSINCiAgICB9LA0KICAgIHsNCiAgICAgICJuYW1lIjogImRkIiwNCiAgICAgICJub3RlIjogIiIsDQogICAgICAidHlwZSI6ICJOdW1iZXIiLA0KICAgICAgInZhbHVlIjogMi4zDQogICAgfSwNCiAgICB7DQogICAgICAibmFtZSI6ICJlZSIsDQogICAgICAibm90ZSI6ICIiLA0KICAgICAgInR5cGUiOiAiU3RyaW5nIiwNCiAgICAgICJ2YWx1ZSI6ICJhYmMiDQogICAgfQ0KICBdDQp9",
+              "payloadType": "InlineBase64"
+            },
+            {
+              "path": "settings.json",
+              "payload": "ew0KICAiJHNjaGVtYSI6ICJodHRwczovL2RldmVsb3Blci5taWNyb3NvZnQuY29tL2pzb24tc2NoZW1hcy9mYWJyaWMvaXRlbS92YXJpYWJsZUxpYnJhcnkvZGVmaW5pdGlvbi9zZXR0aW5ncy8xLjAuMC9zY2hlbWEuanNvbiIsDQogICJ2YWx1ZVNldHNPcmRlciI6IFsNCiAgICAic2V0MiINCiAgXQ0KfQ==",
+              "payloadType": "InlineBase64"
+            },
+            {
+              "path": "valueSets/set2.json",
+              "payload": "ew0KICAiJHNjaGVtYSI6ICJodHRwczovL2RldmVsb3Blci5taWNyb3NvZnQuY29tL2pzb24tc2NoZW1hcy9mYWJyaWMvaXRlbS92YXJpYWJsZUxpYnJhcnkvZGVmaW5pdGlvbi92YWx1ZVNldC8xLjAuMC9zY2hlbWEuanNvbiIsDQogICJuYW1lIjogInNldDIiLA0KICAidmFyaWFibGVPdmVycmlkZXMiOiBbDQogICAgew0KICAgICAgIm5hbWUiOiAidGVzdCIsDQogICAgICAidmFsdWUiOiAzMw0KICAgIH0sDQogICAgew0KICAgICAgIm5hbWUiOiAiYWEiLA0KICAgICAgInZhbHVlIjogZmFsc2UNCiAgICB9LA0KICAgIHsNCiAgICAgICJuYW1lIjogImJiIiwNCiAgICAgICJ2YWx1ZSI6ICIyMDI2LTAxLTE0VDE2OjE1OjIwLjEyM1oiDQogICAgfSwNCiAgICB7DQogICAgICAibmFtZSI6ICJjYyIsDQogICAgICAidmFsdWUiOiAiNmE2YzJmZWYtMDVkOS00ODhiLWJiNzItOWU0OGE5YjFhM2Y4Ig0KICAgIH0sDQogICAgew0KICAgICAgIm5hbWUiOiAiZGQiLA0KICAgICAgInZhbHVlIjogNC41DQogICAgfSwNCiAgICB7DQogICAgICAibmFtZSI6ICJlZSIsDQogICAgICAidmFsdWUiOiAiZGVmIg0KICAgIH0NCiAgXQ0KfQ==",
+              "payloadType": "InlineBase64"
+            },
+            {
+              "path": ".platform",
+              "payload": "ewogICIkc2NoZW1hIjogImh0dHBzOi8vZGV2ZWxvcGVyLm1pY3Jvc29mdC5jb20vanNvbi1zY2hlbWFzL2ZhYnJpYy9naXRJbnRlZ3JhdGlvbi9wbGF0Zm9ybVByb3BlcnRpZXMvMi4wLjAvc2NoZW1hLmpzb24iLAogICJtZXRhZGF0YSI6IHsKICAgICJ0eXBlIjogIlZhcmlhYmxlTGlicmFyeSIsCiAgICAiZGlzcGxheU5hbWUiOiAiVmFyaWFibGVzXzEiCiAgfSwKICAiY29uZmlnIjogewogICAgInZlcnNpb24iOiAiMi4wIiwKICAgICJsb2dpY2FsSWQiOiAiMDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIgogIH0KfQ==",
+              "payloadType": "InlineBase64"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
