@@ -1,7 +1,8 @@
 ﻿{
   "CallsLimit": 0,
   "CallsRateInfo": {
-    "CallsRateIncreaseMode": "Static",
-    "InitialCallsRate": 1
+    "CallsRateUpdateMode": "SecondBySecond",
+    "InitialCallsRate": 1,
+    "SecondBySecondConfig": [ 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 100, 15, 10, 8, 7, 6, 6, 5, 5, 4, 4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
   }
 }

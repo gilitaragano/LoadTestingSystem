@@ -3,10 +3,11 @@
 namespace LoadTestingSytem.Models
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum CallsRateIncreaseMode
+    public enum CallsRateUpdateMode
     {
         Static,
-        LinearRampUp
+        LinearRampUp,
+        SecondBySecond
     }
 
     public class LiveSessionConfiguration
@@ -18,12 +19,15 @@ namespace LoadTestingSytem.Models
 
     public class CallsRateInfo
     {
-        public CallsRateIncreaseMode Mode { get; set; }
+        public CallsRateUpdateMode CallsRateUpdateMode { get; set; }
 
         public int InitialCallsRate { get; set; }
 
         // Required if Mode == LinearRampUp
         public LinearRampUpConfig? LinearRampUpConfig { get; set; }
+
+        // Required if Mode == SecondBySecond
+        public int[]? SecondBySecondConfig { get; set; }
     }
 
     public class LinearRampUpConfig

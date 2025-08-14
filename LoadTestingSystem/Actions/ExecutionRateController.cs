@@ -198,7 +198,7 @@ namespace Actions
                 // Must be at start
                 var currentSecondStart = DateTime.UtcNow;
 
-                if (callsRateInfo.Mode == CallsRateIncreaseMode.LinearRampUp &&
+                if (callsRateInfo.CallsRateUpdateMode == CallsRateUpdateMode.LinearRampUp &&
                     callsRateInfo.LinearRampUpConfig != null)
                 {
                     var rampConfig = callsRateInfo.LinearRampUpConfig;
@@ -213,6 +213,19 @@ namespace Actions
 
                         _lastRateIncreaseTime = DateTime.UtcNow;
                         Console.WriteLine($"[Rate Increased] New rate: {_currentRate} calls/sec");
+                    }
+                }
+                else if (callsRateInfo.CallsRateUpdateMode == CallsRateUpdateMode.SecondBySecond &&
+                         callsRateInfo.SecondBySecondConfig != null &&
+                         callsRateInfo.SecondBySecondConfig.Count() > 0)
+                {
+                    var secondBySecondRates = callsRateInfo.SecondBySecondConfig;
+
+                    int rateIndex = secondCounter % secondBySecondRates.Count();
+
+                    lock (_rateLock)
+                    {
+                        _currentRate = secondBySecondRates[rateIndex];
                     }
                 }
 

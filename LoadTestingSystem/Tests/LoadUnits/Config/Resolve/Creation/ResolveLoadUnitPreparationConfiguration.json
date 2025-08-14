@@ -2,7 +2,7 @@
   "WorkspacesConfiguration": {
     "WorkspaceNamePrefix": "ResolveUnitWs",
     "WorkspaceCount": 100,
-    "CapacityObjectId": "51D7A0D5-C4F9-4B26-B8BD-899BB0FC0141",
+    "CapacityObjectId": "2C714E32-888D-4143-B1BB-6D235B5A6FA5",
     "WorkspaceArtifactsByType": [
       {
         "Type": "VariableLibrary",
