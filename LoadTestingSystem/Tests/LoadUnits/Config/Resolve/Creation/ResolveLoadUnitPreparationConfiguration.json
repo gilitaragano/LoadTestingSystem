@@ -1,8 +1,7 @@
 ﻿{
   "WorkspacesConfiguration": {
     "WorkspaceNamePrefix": "ResolveUnitWs",
-    "WorkspaceCount": 100,
-    "CapacityObjectId": "2C714E32-888D-4143-B1BB-6D235B5A6FA5",
+    "CapacityObjectId": "7EEBEBA0-4130-4694-9C2A-680EE3F99F1D",
     "WorkspaceArtifactsByType": [
       {
         "Type": "VariableLibrary",
@@ -29,8 +28,808 @@
           }
         ]
       }
+    ],
+    "WorkspaceDetailsList": [
+      {
+        "UserInfoList": [
+          {
+            "Index": 1,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 2,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 3,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 4,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 5,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 6,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 7,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 8,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 9,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 10,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 11,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 12,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 13,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 14,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 15,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 16,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 17,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 18,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 19,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 20,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 21,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 22,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 23,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 24,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 25,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 26,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 27,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 28,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 29,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 30,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 31,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 32,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 33,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 34,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 35,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 36,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 37,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 38,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 39,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 40,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 41,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 42,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 43,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 44,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 45,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 46,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 47,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 48,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 49,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 50,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 51,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 52,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 53,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 54,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 55,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 56,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 57,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 58,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 59,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 60,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 61,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 62,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 63,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 64,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 65,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 66,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 67,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 68,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 69,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 70,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 71,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 72,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 73,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 74,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 75,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 76,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 77,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 78,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 79,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 80,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 81,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 82,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 83,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 84,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 85,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 86,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 87,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 88,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 89,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 90,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 91,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 92,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 93,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 94,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 95,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 96,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 97,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 98,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 99,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 100,
+            "Role": "Admin"
+          }
+        ]
+      }
     ]
-  },
-  "DeploymentPipelinesConfiguration": {
   }
 }

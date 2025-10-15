@@ -53,7 +53,12 @@ namespace PowerBITokenGenerator
             foreach (var ucw in userCertWorkspaceList)
             {
                 var accessToken = await GenerateAccessTokenForUser(ucw, commonKvUrl);
-                output.Add(new UserCertWorkspaceToken { UserName = ucw.UserName, CertificateName = ucw.CertificateName, WorkspaceId = ucw.WorkspaceId, AccessToken = accessToken });
+                output.Add(new UserCertWorkspaceToken {
+                    UserId = ucw.UserId,
+                    UserName = ucw.UserName, 
+                    CertificateName = ucw.CertificateName, 
+                    WorkspaceIds = ucw.WorkspaceIds, 
+                    AccessToken = accessToken });
             }
 
             return output;

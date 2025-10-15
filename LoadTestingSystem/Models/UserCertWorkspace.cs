@@ -4,7 +4,7 @@ namespace LoadTestingSytem.Models
 {
     public class UserCertWorkspace : UserCert
     {
-        [JsonPropertyName("workspaceId")]
-        public string WorkspaceId { get; set; } = string.Empty;
+        [JsonPropertyName("workspaceIds")]
+        public List<string> WorkspaceIds { get; set; } = new();
     }
 }

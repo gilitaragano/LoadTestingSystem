@@ -12,7 +12,6 @@ namespace LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems
 {
     public class GetItemsLoadUnit
     {
-        private Guid _fabricLoadUnitEnvId;
         private LoadTestConfig _loadTestConfig = null!;
         private FabricEnvConfiguration _fabricEnvConfiguration = null!;
         private string _tenantAdminAccessToken = null!;
@@ -29,13 +28,14 @@ namespace LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems
 
         private List<string> _workspaceIds = null!;
         private int _loadUnitIndex;
+        private Guid _loadUnitObjectId;
 
-        public GetItemsLoadUnit(bool prepareFabricEnv, DateTime sessionStartTime, int loadUnitIndex = 0)
+        public GetItemsLoadUnit(bool prepareFabricEnv, DateTime sessionStartTime, Guid? loadUnitObjectId, int loadUnitIndex = 0)
         {
             _prepareFabricEnv = prepareFabricEnv;
             _sessionStartTime = sessionStartTime;
-            _fabricLoadUnitEnvId = Guid.NewGuid();
             _loadUnitIndex = loadUnitIndex;
+            _loadUnitObjectId = loadUnitObjectId ?? Guid.NewGuid();
         }
 
         public async Task<LiveExecutionSessionRunner<string, GetItemsLoadUnit>> PrepareLoadUnit(string sessionConfigFile)
@@ -50,6 +50,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems
                 _userCertWorkspaceList = await PrepareLoadUnitFabricEnv.RunAsync(
                     _loadUnitName,
                     _loadUnitIndex,
+                    _loadUnitObjectId,
                     $"{_dirBase}Creation/GetItemsLoadUnitPreparationConfiguration.json",
                     $"{_dirBase}Creation/ReportDefinitions.json",
                     userCertList);
@@ -61,6 +62,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems
                     _tenantAdminAccessToken,
                     workspaceNamePrefix: _fabricEnvConfiguration.WorkspacesConfiguration.WorkspaceNamePrefix,
                     _loadUnitIndex,
+                    _loadUnitObjectId,
                     userCertList);
             }
 
@@ -145,7 +147,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems
             _workspaceIds = await PrepareWorkspaceIdList.RunAsync(
                 baseUrl: _loadTestConfig.BaseUrl,
                 tenantAdminAccessToken,
-                workspaceNamePrefix: _fabricEnvConfiguration.WorkspacesConfiguration.WorkspaceNamePrefix
+                loadUnitObjectId: _loadUnitObjectId
             );
 
             if (_workspaceIds == null || _workspaceIds.Count == 0)

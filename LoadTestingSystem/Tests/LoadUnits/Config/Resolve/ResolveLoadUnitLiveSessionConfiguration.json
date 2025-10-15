@@ -3,6 +3,11 @@
   "CallsRateInfo": {
     "CallsRateUpdateMode": "SecondBySecond",
     "InitialCallsRate": 1,
-    "SecondBySecondConfig": [ 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 100, 15, 10, 8, 7, 6, 6, 5, 5, 4, 4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+    "SecondBySecondConfig": [
+      {
+        "CallsCount": 5,
+        "OffsetsMs": [ 100, 300, 400, 800, 900 ]
+      }
+    ]
   }
 }

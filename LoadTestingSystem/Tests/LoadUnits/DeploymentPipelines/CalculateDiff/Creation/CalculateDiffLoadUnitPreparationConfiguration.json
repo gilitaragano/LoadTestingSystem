@@ -17,8 +17,6 @@
     ]
   },
   "DeploymentPipelinesConfiguration": {
-    "PipelineNamePrefix": "AutoPipeline218",
-    "PipelineCount": 2,
-    "StageCount": 2
+    "PipelineNamePrefix": "AutoPipeline218"
   }
 }

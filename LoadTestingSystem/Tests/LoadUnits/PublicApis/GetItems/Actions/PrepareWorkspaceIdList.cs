@@ -6,7 +6,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems.Actions
 {
     public static class PrepareWorkspaceIdList
     {
-        public static async Task<List<string>> RunAsync(string baseUrl, string accessToken, string workspaceNamePrefix, string outputFile = "FilteredWorkspaces.txt")
+        public static async Task<List<string>> RunAsync(string baseUrl, string accessToken, Guid loadUnitObjectId, string outputFile = "FilteredWorkspaces.txt")
         {
             if (string.IsNullOrWhiteSpace(baseUrl))
             {
@@ -38,18 +38,13 @@ namespace LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems.Actions
 
                 var allWorkspaces = workspaceListResponse?.Value ?? new List<WorkspaceSummary>();
 
-                if (string.IsNullOrWhiteSpace(workspaceNamePrefix))
-                {
-                    workspaceNamePrefix = "";
-                }
-
                 var filtered = allWorkspaces
-                    .Where(ws => !string.IsNullOrEmpty(ws.DisplayName) && ws.DisplayName.StartsWith($"{workspaceNamePrefix}-"))
+                    .Where(ws => !string.IsNullOrEmpty(ws.DisplayName) && ws.DisplayName.EndsWith($"{loadUnitObjectId}"))
                     .ToList();
 
                 if (filtered.Count == 0)
                 {
-                    Console.WriteLine($"No workspaces found with name starting with '{workspaceNamePrefix}-'.");
+                    Console.WriteLine($"No workspaces found with name ends with '{loadUnitObjectId}'.");
                     return new List<string>();
                 }
 

@@ -1,5 +1,6 @@
 ﻿using LoadTestingSytem.Models;
 using LoadTestingSytem.Tests.Workloads.Config.Resolve.Models;
+using System;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -12,6 +13,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.Config.Resolve.Actions
             string baseUrl,
             string tenantAdminAccessToken,
             int loadUnitIndex,
+            Guid loadUnitObjectId,
             string workspaceNamePrefix,
             List<string> workspaceIds)
         {
@@ -45,11 +47,10 @@ namespace LoadTestingSytem.Tests.LoadUnits.Config.Resolve.Actions
                     var wsDetails = JsonSerializer.Deserialize<WorkspaceDetails>(wsDetailsJson);
 
                     var wsName = wsDetails?.DisplayName ?? string.Empty;
-                    var wsPrefix = $"{workspaceNamePrefix}-{loadUnitIndex}-";
 
-                    if (!wsName.StartsWith(wsPrefix))
+                    if (!wsName.EndsWith($"{loadUnitObjectId}"))
                     {
-                        Console.WriteLine($"Skipping workspace '{wsName}' (name does not start with {wsPrefix})");
+                        Console.WriteLine($"Skipping workspace '{wsName}' (name does not ends with {loadUnitObjectId})");
                         continue;
                     }
 

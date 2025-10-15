@@ -1,34 +1,35 @@
-﻿using LoadTestingSytem.Models;
+﻿using Actions;
+using LoadTestingSytem.Models;
 using LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems;
 using LoadTestingSytem.Tests.Workloads.Config.Resolve;
 using LoadTestingSytem.Tests.Workloads.Config.Resolve.Models;
 
-class Program
-{
-    static async Task Main(string[] args)
-    {
-        if (args.Length == 0)
-        {
-            Console.WriteLine("Usage: LoadTestingSystem.exe ResolveLoadUnitLiveSession");
-            return;
-        }
+//class Program
+//{
+//    static async Task Main(string[] args)
+//    {
+//        if (args.Length == 0)
+//        {
+//            Console.WriteLine("Usage: LoadTestingSystem.exe ResolveLoadUnitLiveSession");
+//            return;
+//        }
 
-        string mode = args[0];
-        bool prepareFabricEnv = false;
-        var testStartTime = DateTime.UtcNow;
+//        string mode = args[0];
+//        bool prepareFabricEnv = false;
+//        var testStartTime = DateTime.UtcNow;
 
-        ILoadUnit loadUnit = mode switch
-        {
-            "resolve" => new RunnerLoadUnit<ResolveResultSummary, ResolveLoadUnit>(
-                () => new ResolveLoadUnit(prepareFabricEnv, testStartTime)
-                    .PrepareLoadUnit("ResolveLoadUnitLiveSessionConfiguration.json")),
+//        ILoadUnit loadUnit = mode switch
+//        {
+//            "resolve" => new RunnerLoadUnit<ResolveResultSummary, ResolveLoadUnit>(
+//                () => new ResolveLoadUnit(prepareFabricEnv, testStartTime)
+//                    .PrepareLoadUnit("ResolveLoadUnitLiveSessionConfiguration.json")),
 
-            _ => throw new ArgumentException($"Unknown mode: {args[0]}")
-        };
+//            _ => throw new ArgumentException($"Unknown mode: {args[0]}")
+//        };
 
-        await loadUnit.RunAsync("Test_Resolve");
-    }
-}
+//        await loadUnit.RunAsync("Test_Resolve");
+//    }
+//}
 
 
 //class Program
@@ -64,80 +65,87 @@ class Program
 
 //using LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems;
 
-//class Program
-//{
-//    static async Task Main(string[] args)
-//    {
-//        Console.WriteLine("Choose Load Test Mode:");
-//        Console.WriteLine("0 - Resolve");
-//        Console.WriteLine("1 - GetItems");
-//        Console.WriteLine("2 - GetItemsBaseline");
-//        Console.WriteLine("3 - Run Both in Parallel");
-//        Console.Write("Enter your choice (0/1/2/3): ");
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        Console.WriteLine("Choose Load Test Mode:");
+        Console.WriteLine("0 - Resolve");
+        Console.WriteLine("1 - GetItems");
+        Console.WriteLine("2 - GetItemsBaseline");
+        Console.WriteLine("3 - Run Both in Parallel");
+        Console.WriteLine("4 - Generate userCerts file");
+        Console.Write("Enter your choice:");
 
-//        var choice = Console.ReadLine()?.Trim();
+        var choice = Console.ReadLine()?.Trim();
 
-//        string testName = "Test_GetItemsUponBaseline";
-//        var testStartTime = DateTime.UtcNow;
+        string testName = "Test_GetItemsUponBaseline";
+        var testStartTime = DateTime.UtcNow;
 
-//        switch (choice)
-//        {
-//            case "0":
-//                {
-//                    var loadUnit = new RunnerLoadUnit<ResolveResultSummary, ResolveLoadUnit>(
-//                        () => new ResolveLoadUnit(prepareFabricEnv: false, testStartTime)
-//                            .PrepareLoadUnit("ResolveLoadUnitLiveSessionConfiguration.json"));
+        switch (choice)
+        {
+            case "0":
+                {
+                    var loadUnit = new RunnerLoadUnit<ResolveResultSummary, ResolveLoadUnit>(
+                        () => new ResolveLoadUnit(prepareFabricEnv: true, testStartTime, loadUnitObjectId: null)//loadUnitObjectId: new Guid("83a17fc8-ec95-4c38-a1ed-9a7d36a07043")
+                            .PrepareLoadUnit("ResolveLoadUnitLiveSessionConfiguration.json"));
 
-//                    Console.WriteLine($"Running Resolve with test '{testName}'...");
-//                    await loadUnit.RunAsync(testName);
-//                    break;
-//                }
-//            case "1":
-//                {
-//                    var loadUnit = new RunnerLoadUnit<string, GetItemsLoadUnit>(
-//                        () => new GetItemsLoadUnit(prepareFabricEnv: true, testStartTime)
-//                            .PrepareLoadUnit("GetItemsLoadUnitLiveSessionConfiguration.json"));
+                    Console.WriteLine($"Running Resolve with test '{testName}'...");
+                    await loadUnit.RunAsync(testName);
+                    break;
+                }
+            case "1":
+                {
+                    var loadUnit = new RunnerLoadUnit<string, GetItemsLoadUnit>(
+                        () => new GetItemsLoadUnit(prepareFabricEnv: true, testStartTime, loadUnitObjectId: null)
+                            .PrepareLoadUnit("GetItemsLoadUnitLiveSessionConfiguration.json"));
 
-//                    Console.WriteLine($"Running getitems with test '{testName}'...");
-//                    await loadUnit.RunAsync(testName);
-//                    break;
-//                }
+                    Console.WriteLine($"Running getitems with test '{testName}'...");
+                    await loadUnit.RunAsync(testName);
+                    break;
+                }
 
-//            case "2":
-//                {
-//                    var loadUnit = new RunnerLoadUnit<string, GetItemsLoadUnit>(
-//                        () => new GetItemsLoadUnit(prepareFabricEnv: true, testStartTime)
-//                            .PrepareLoadUnit("GetItemsLoadUnitLiveSessionBaselineConfiguration.json"));
+            case "2":
+                {
+                    var loadUnit = new RunnerLoadUnit<string, GetItemsLoadUnit>(
+                        () => new GetItemsLoadUnit(prepareFabricEnv: true, testStartTime, loadUnitObjectId: null)
+                            .PrepareLoadUnit("GetItemsLoadUnitLiveSessionBaselineConfiguration.json"));
 
-//                    Console.WriteLine($"Running getitemsBaseline with test '{testName}'...");
-//                    await loadUnit.RunAsync(testName);
-//                    break;
-//                }
+                    Console.WriteLine($"Running getitemsBaseline with test '{testName}'...");
+                    await loadUnit.RunAsync(testName);
+                    break;
+                }
 
-//            case "3":
-//                {
-//                    var loadUnit1 = new RunnerLoadUnit<string, GetItemsLoadUnit>(
-//                        () => new GetItemsLoadUnit(prepareFabricEnv: true, testStartTime)
-//                            .PrepareLoadUnit("GetItemsLoadUnitLiveSessionConfiguration.json"));
+            case "3":
+                {
+                    var loadUnit1 = new RunnerLoadUnit<string, GetItemsLoadUnit>(
+                        () => new GetItemsLoadUnit(prepareFabricEnv: true, testStartTime, loadUnitObjectId: null)
+                            .PrepareLoadUnit("GetItemsLoadUnitLiveSessionConfiguration.json"));
 
-//                    var loadUnit2 = new RunnerLoadUnit<string, GetItemsLoadUnit>(
-//                        () => new GetItemsLoadUnit(prepareFabricEnv: true, testStartTime)
-//                            .PrepareLoadUnit("GetItemsLoadUnitLiveSessionBaselineConfiguration.json"));
+                    var loadUnit2 = new RunnerLoadUnit<string, GetItemsLoadUnit>(
+                        () => new GetItemsLoadUnit(prepareFabricEnv: true, testStartTime, loadUnitObjectId: null)
+                            .PrepareLoadUnit("GetItemsLoadUnitLiveSessionBaselineConfiguration.json"));
 
-//                    Console.WriteLine("Running both getitems and getitemsBaseline in parallel...");
+                    Console.WriteLine("Running both getitems and getitemsBaseline in parallel...");
 
-//                    var task1 = Task.Run(() => loadUnit1.RunAsync(testName + "_GetItems"));
-//                    var task2 = Task.Run(() => loadUnit2.RunAsync(testName + "_GetItemsBaseline"));
+                    var task1 = Task.Run(() => loadUnit1.RunAsync(testName + "_GetItems"));
+                    var task2 = Task.Run(() => loadUnit2.RunAsync(testName + "_GetItemsBaseline"));
 
-//                    await Task.WhenAll(task1, task2);
-//                    break;
-//                }
+                    await Task.WhenAll(task1, task2);
+                    break;
+                }
 
-//            default:
-//                throw new ArgumentException("Invalid choice. Please enter 1, 2, or 3.");
-//        }
+            case "4":
+                {
+                    await UserCertsFileGenerator.RunAsync();
+                    break;
+                }
 
-//        Console.WriteLine("Execution completed. Press any key to exit.");
-//        Console.ReadKey();
-//    }
-//}
+            default:
+                throw new ArgumentException("Invalid choice. Please enter 1, 2, or 3.");
+        }
+
+        Console.WriteLine("Execution completed. Press any key to exit.");
+        Console.ReadKey();
+    }
+}

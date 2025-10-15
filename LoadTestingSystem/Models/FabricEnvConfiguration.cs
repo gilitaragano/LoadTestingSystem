@@ -9,10 +9,23 @@
     public class WorkspacesConfiguration
     {
         public string WorkspaceNamePrefix { get; set; } = string.Empty;
-        public int WorkspaceCount { get; set; }
+        public List<WorkspaceDetails> WorkspaceDetailsList { get; set; } = new();
         public string CapacityObjectId { get; set; } = string.Empty;
         public List<WorkspaceArtifactConfiguration> WorkspaceArtifactsByType { get; set; } = new();
     }
+
+    public class WorkspaceDetails
+    {
+        public List<UserInfo> UserInfoList { get; set; } = new();
+    }
+
+    public class UserInfo
+    {
+        public int Index { get; set; }
+
+        public string Role { get; set; } = string.Empty;
+    }
+
 
     public class WorkspaceArtifactConfiguration
     {
@@ -30,8 +43,8 @@
 
     public class DeploymentPipelinesConfiguration
     {
+        public int PipelineCount { get; set; } = 0;
+
         public string PipelineNamePrefix { get; set; } = string.Empty;
-        public int PipelineCount { get; set; }
-        public int StageCount { get; set; }
     }
 }

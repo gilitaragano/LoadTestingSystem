@@ -18,47 +18,21 @@ namespace LoadTestingSystem.Scenarios
             string tenantAdminAccessToken,
             string workspaceNamePrefix,
             int loadUnitIndex,
+            Guid loadUnitObjectId,
             List<UserCert> userCertList)
         {
-            var userCertWorkspaceList = new List<UserCertWorkspace>();
-
-            var workspaceSummaries = await GetFilteredWorkspaceSummariesAsync(baseUrl, tenantAdminAccessToken, workspaceNamePrefix, loadUnitIndex);
+            var workspaceSummaries = await GetFilteredWorkspaceSummariesAsync(baseUrl, tenantAdminAccessToken, workspaceNamePrefix, loadUnitIndex, loadUnitObjectId);
             if (workspaceSummaries == null)
             {
                 Console.WriteLine("Failed to fetch workspace summaries.");
-                return userCertWorkspaceList;
+                return new List<UserCertWorkspace>();
             }
 
-            foreach (var ws in workspaceSummaries)
-            {
-                // Extract index from name like: "AutoWS-002-ENVX"
-                var match = Regex.Match(ws.DisplayName, $@"^{workspaceNamePrefix}-{loadUnitIndex}-(\d{{3}})-[0-9a-fA-F]{{8}}-[0-9a-fA-F]{{4}}-[0-9a-fA-F]{{4}}-[0-9a-fA-F]{{4}}-[0-9a-fA-F]{{12}}$");
-                if (!match.Success)
-                {
-                    Console.WriteLine($"Skipping workspace with unexpected name format: {ws.DisplayName}");
-                    continue;
-                }
-
-                int userIndex = int.Parse(match.Groups[1].Value) - 1;
-                if (userIndex < 0 || userIndex >= userCertList.Count)
-                {
-                    Console.WriteLine($"No matching user for index {userIndex + 1} (workspace: {ws.DisplayName})");
-                    continue;
-                }
-
-                var userCert = userCertList[userIndex];
-
-                var userCertWorkspace = new UserCertWorkspace
-                {
-                    UserId = userCert.UserId,
-                    UserName = userCert.UserName,
-                    CertificateName = userCert.CertificateName,
-                    WorkspaceId = ws.Id
-                };
-
-                userCertWorkspaceList.Add(userCertWorkspace);
-                Console.WriteLine($"Mapped user '{userCert.UserName}' to workspace '{ws.DisplayName}' (ID: {ws.Id})");
-            }
+            var userCertWorkspaceList = await GetWorkspaceRoleAssignmentsAsync(
+                baseUrl,
+                tenantAdminAccessToken,
+                workspaceSummaries.Select(workspaceSummary => workspaceSummary.Id).ToList(),
+                userCertList);
 
             return userCertWorkspaceList;
         }
@@ -67,7 +41,8 @@ namespace LoadTestingSystem.Scenarios
             string baseUrl,
             string tenantAdminAccessToken,
             string workspaceNamePrefix,
-            int loadUnitIndex)
+            int loadUnitIndex,
+            Guid loadUnitObjectId)
         {
             using var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tenantAdminAccessToken);
@@ -84,8 +59,66 @@ namespace LoadTestingSystem.Scenarios
             return workspaceListResponse?.Value?
                 .Where(ws =>
                     !string.IsNullOrEmpty(ws.DisplayName) &&
-                    ws.DisplayName.StartsWith($"{workspaceNamePrefix}-{loadUnitIndex}-"))
+                    ws.DisplayName.EndsWith($"{loadUnitObjectId}"))
                 .ToList();
+        }
+
+        public static async Task<List<UserCertWorkspace>> GetWorkspaceRoleAssignmentsAsync(
+            string baseUrl,
+            string tenantAdminAccessToken,
+            List<string> workspaceIds,
+            List<UserCert> userCertList)
+        {
+            using var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tenantAdminAccessToken);
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var result = new List<UserCertWorkspace>();
+
+            foreach (var wsId in workspaceIds)
+            {
+                var url = $"{baseUrl}/v1/workspaces/{wsId}/roleAssignments";
+                var response = await httpClient.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+
+                var json = await response.Content.ReadAsStringAsync();
+                var assignmentsResponse = JsonSerializer.Deserialize<WorkspaceRoleAssignmentsResponse>(json);
+
+                if (assignmentsResponse?.Value == null) continue;
+
+                foreach (var assignment in assignmentsResponse.Value)
+                {
+                    if (assignment.Principal.Type != "User") continue; // only users, skip service principals/groups
+
+                    var userId = assignment.Principal.Id;
+
+                    var userCert = userCertList.FirstOrDefault(u => u.UserId == userId);
+                    if (userCert == null) continue; // skip if user not in provided list
+
+                    var existing = result.FirstOrDefault(u => u.UserId == userId);
+                    if (existing != null)
+                    {
+                        if (!existing.WorkspaceIds.Contains(wsId))
+                        {
+                            existing.WorkspaceIds.Add(wsId);
+                        }
+                    }
+                    else
+                    {
+                        var userCertWorkspace = new UserCertWorkspace
+                        {
+                            UserId = userCert.UserId,
+                            UserName = userCert.UserName,
+                            CertificateName = userCert.CertificateName,
+                            WorkspaceIds = new List<string> { wsId }
+                        };
+
+                        result.Add(userCertWorkspace);
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }

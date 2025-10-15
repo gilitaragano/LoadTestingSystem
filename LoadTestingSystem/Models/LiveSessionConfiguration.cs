@@ -27,7 +27,26 @@ namespace LoadTestingSytem.Models
         public LinearRampUpConfig? LinearRampUpConfig { get; set; }
 
         // Required if Mode == SecondBySecond
-        public int[]? SecondBySecondConfig { get; set; }
+        public SecondConfig[]? SecondBySecondConfig { get; set; }
+    }
+
+    public class SecondConfig
+    {
+        /// <summary>
+        /// The number of calls scheduled in this second.
+        /// </summary>
+        public int CallsCount { get; set; }
+
+        /// <summary>
+        /// Millisecond offsets within this second when calls should occur.
+        /// Example: [100, 200, 300] means calls at 0.1s, 0.2s, 0.3s.
+        /// </summary>
+        public List<int>? CallOffsetsMs { get; set; } = new();
+
+        public bool HasValidOffsets =>
+            CallOffsetsMs != null &&
+            CallOffsetsMs.Count > 0 &&
+            CallOffsetsMs.All(offset => offset >= 0 && offset < 1000);
     }
 
     public class LinearRampUpConfig

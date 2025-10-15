@@ -2,6 +2,7 @@
 using LoadTestingSytem.Models;
 using LoadTestingSytem.Tests.LoadUnits.DeploymentPipelines.CalculateDiff.Models;
 using PowerBITokenGenerator;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -13,6 +14,7 @@ namespace Scenarios
         public static async Task<List<UserCertWorkspace>> RunAsync(
             string loadUnitName, 
             int loadUnitIndex,
+            Guid loadUnitObjectId,
             string testEnvPreparationConfigFilePath, 
             string definitionsFilePath,
             List<UserCert> userCertList)
@@ -27,7 +29,7 @@ namespace Scenarios
 
             // Run the creation
             Console.WriteLine("\nCreating Fabric Load Testing Environment...");
-            var creator = new CreateFabricLoadUnitEnv(loadUnitIndex, loadTestConfig.BaseUrl, tenantAdminAccessToken, testEnvPreparationConfigFilePath, definitionsFilePath, userCertList);
+            var creator = new CreateFabricLoadUnitEnv(loadUnitIndex, loadUnitObjectId, loadTestConfig.BaseUrl, tenantAdminAccessToken, testEnvPreparationConfigFilePath, definitionsFilePath, userCertList);
 
             userCertWorkspaceList = await creator.RunAsync();
 
@@ -40,6 +42,7 @@ namespace Scenarios
     public class CreateFabricLoadUnitEnv
     {
         private int _loadUnitIndex;
+        private Guid _loadUnitObjectId;
         private string _baseUrl;
         private string _publicApiBaseUrl;
         private string _tenantAdminAccessToken;
@@ -49,6 +52,7 @@ namespace Scenarios
 
         public CreateFabricLoadUnitEnv(
             int loadUnitIndex, 
+            Guid loadUnitObjectId, 
             string baseUrl, 
             string tenantAdminAccessToken, 
             string testEnvPreparationConfigFilePath, 
@@ -59,6 +63,7 @@ namespace Scenarios
             _baseUrl = baseUrl;
             _publicApiBaseUrl = $"{_baseUrl}/v1";
             _loadUnitIndex = loadUnitIndex;
+            _loadUnitObjectId = loadUnitObjectId;
             _userCertList = userCertList;
 
             var fabricEnvConfigurationFile = File.ReadAllText(testEnvPreparationConfigFilePath);
@@ -77,15 +82,20 @@ namespace Scenarios
             using var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tenantAdminAccessToken);
 
-            for (int i = 1; i <= _fabricEnvConfiguration.WorkspacesConfiguration.WorkspaceCount; i++)
+            var workspacesConfiguration = _fabricEnvConfiguration.WorkspacesConfiguration;
+            var workspaceDetailsList = workspacesConfiguration.WorkspaceDetailsList;
+
+            //var capacityObjectId = await CreatePCapacityAndGetOidAsync("Cap-test-1", "P1", ["Admin1CBA@FabricESshared05PPE.ccsctp.net"]);
+
+            for (int i = 1; i <= workspaceDetailsList.Count; i++)
             {
-                var workspaceName = $"{_fabricEnvConfiguration.WorkspacesConfiguration.WorkspaceNamePrefix}-{_loadUnitIndex}-{i:D3}-{Guid.NewGuid()}";
+                var workspaceName = $"{workspacesConfiguration.WorkspaceNamePrefix}{i - 1}-lu{_loadUnitIndex}-{_loadUnitObjectId}";
                 Console.WriteLine($"\nCreating workspace: {workspaceName}");
 
                 var workspaceBody = new
                 {
                     DisplayName = workspaceName,
-                    capacityId = _fabricEnvConfiguration.WorkspacesConfiguration.CapacityObjectId
+                    capacityId = workspacesConfiguration.CapacityObjectId
                 };
 
                 var workspaceResponse = await PostWithRetryAsync(httpClient, $"{_publicApiBaseUrl}/workspaces", workspaceBody);
@@ -93,22 +103,13 @@ namespace Scenarios
                 var workspaceId = workspaceJson.RootElement.GetProperty("id").GetString();
                 Console.WriteLine($"Workspace created with ID: {workspaceId}");
 
-                var userCert = _userCertList[(i - 1) % _userCertList.Count];
-                var username = userCert.UserName;
-                Console.WriteLine($"Adding user '{username}' as admin to workspace '{workspaceName}'");
-
-                var requestBody = new
-                {
-                    principal = new
-                    {
-                        id = userCert.UserId,
-                        type = "User"
-                    },
-                    role = "Admin"
-                };
-                var addUserUrl = $"{_publicApiBaseUrl}/workspaces/{workspaceId}/roleAssignments";
-                await PostWithRetryAsync(httpClient, addUserUrl, requestBody);
-                Console.WriteLine($"User '{username}' added as admin.");
+                // Add users as admins and upsert into userCertWorkspaceList
+                await AddUsersAsAdminsAsync(
+                    httpClient,
+                    workspaceId,
+                    workspaceName,
+                    workspaceDetailsList[i - 1].UserInfoList
+                );
 
                 foreach (var WorkspaceArtifacts in _fabricEnvConfiguration.WorkspacesConfiguration.WorkspaceArtifactsByType)
                 {
@@ -120,14 +121,14 @@ namespace Scenarios
 
                         var definition = _definitions == null ? null : GetArtifactDefinition(itemType, j);
 
-                        if (itemType == "ReportAndSemanticModel") //TODO make this part more generic
+                        if (itemType == "ReportAndSemanticModel") // TODO: make generic
                         {
                             var itemBody = new
                             {
                                 definitionParts = definition.DefinitionParts
                             };
 
-                            var response = await PostWithRetryAsync(httpClient, $"{_publicApiBaseUrl}/workspaces/{workspaceId}/importItemDefinitions", itemBody);
+                            await PostWithRetryAsync(httpClient, $"{_publicApiBaseUrl}/workspaces/{workspaceId}/importItemDefinitions", itemBody);
                         }
                         else
                         {
@@ -138,63 +139,111 @@ namespace Scenarios
                                 definition
                             };
 
-                            var response = await PostWithRetryAsync(httpClient, $"{_publicApiBaseUrl}/workspaces/{workspaceId}/items", itemBody);
+                            await PostWithRetryAsync(httpClient, $"{_publicApiBaseUrl}/workspaces/{workspaceId}/items", itemBody);
                         }
 
                         Console.WriteLine("Item created successfully");
                     }
                 }
 
-                var userCertWorkspace = new UserCertWorkspace
+                // Upsert users into userCertWorkspaceList
+                var userIndices = _fabricEnvConfiguration.WorkspacesConfiguration.WorkspaceDetailsList[i - 1].UserInfoList.Select(UserInfo => UserInfo.Index);
+                foreach (var userIndex in userIndices)
                 {
-                    UserId = userCert.UserId,
-                    UserName = userCert.UserName,
-                    CertificateName = userCert.CertificateName,
-                    WorkspaceId = workspaceId
-                };
+                    var userCert = _userCertList[(userIndex - 1) % _userCertList.Count];
+                    var existingUser = userCertWorkspaceList.FirstOrDefault(u => u.UserId == userCert.UserId);
 
-                userCertWorkspaceList.Add(userCertWorkspace);
+                    if (existingUser != null)
+                    {
+                        if (!existingUser.WorkspaceIds.Contains(workspaceId))
+                            existingUser.WorkspaceIds.Add(workspaceId);
+                    }
+                    else
+                    {
+                        userCertWorkspaceList.Add(new UserCertWorkspace
+                        {
+                            UserId = userCert.UserId,
+                            UserName = userCert.UserName,
+                            CertificateName = userCert.CertificateName,
+                            WorkspaceIds = new List<string> { workspaceId }
+                        });
+                    }
+                }
             }
 
-            var _workspaceIds = userCertWorkspaceList.Select(ucw => ucw.WorkspaceId).ToList();
-            var deploymentPipelineConfiguration = _fabricEnvConfiguration.DeploymentPipelinesConfiguration;
-            var pipelineCount = deploymentPipelineConfiguration == null ? 0 : deploymentPipelineConfiguration.PipelineCount;
-            var stagesPerPipelineCount = deploymentPipelineConfiguration == null ? 0 : deploymentPipelineConfiguration.StageCount;
+            var _workspaceIds = userCertWorkspaceList.SelectMany(ucw => ucw.WorkspaceIds).ToList();
 
-            if (_workspaceIds == null || _workspaceIds.Count < pipelineCount * stagesPerPipelineCount)
-                throw new ArgumentException($"Provide exactly {pipelineCount * stagesPerPipelineCount} workspace ID.");
-
-            if (pipelineCount > 0 && stagesPerPipelineCount > 0)
-            { // TODO temp delay to avoid WorkspaceMigrationOperationInProgress failure
-                var delayInSecForWorkspaceMigrationOperationComletion = 2 * 60;
-                Console.WriteLine($"\nDelay of {delayInSecForWorkspaceMigrationOperationComletion} seconds to allow workspace capacity migration to be completed...");
-                await Task.Delay(TimeSpan.FromSeconds(delayInSecForWorkspaceMigrationOperationComletion));
-            }
-
-            for (int p = 1; p <= pipelineCount; p++)
+            if (_workspaceIds != null && _workspaceIds.Count > 0)
             {
-                var pipelineName = $"{_fabricEnvConfiguration.DeploymentPipelinesConfiguration.PipelineNamePrefix}-{p:D3}";
-                Console.WriteLine($"\nCreating deployment pipeline: {pipelineName}");
+                var deploymentPipelineConfiguration = _fabricEnvConfiguration.DeploymentPipelinesConfiguration;
 
-                var pipelineId = await CreatePipelineAsync(pipelineName, stagesPerPipelineCount);
-                Console.WriteLine($"✅ Created pipeline '{pipelineName}', ID = {pipelineId}");
+                var pipelineCount = deploymentPipelineConfiguration.PipelineCount;
 
-                var pipelineStages = await GetPipelineStagesAsync(pipelineId);
-
-                for (int s = 0; s < stagesPerPipelineCount; s++)
+                if (pipelineCount > 0)
                 {
-                    var stage = pipelineStages[s];
-                    var stageId = stage.Id;
-                    var workspaceId = _workspaceIds[(p - 1) * stagesPerPipelineCount + s];
+                    // TODO temp delay to avoid WorkspaceMigrationOperationInProgress failure
+                    var delayInSecForWorkspaceMigrationOperationComletion = 2 * 60;
+                    var stagesPerPipelineCount = _workspaceIds.Count / pipelineCount;
+                    Console.WriteLine($"\nDelay of {delayInSecForWorkspaceMigrationOperationComletion} seconds to allow workspace capacity migration to be completed...");
+                    await Task.Delay(TimeSpan.FromSeconds(delayInSecForWorkspaceMigrationOperationComletion));
 
-                    await AssignWorkspaceToStageAsync(pipelineId, stageId, workspaceId);
-                    Console.WriteLine($"   ➤ Assigned workspace {workspaceId} to stage {stage.DisplayName}");
+
+                    for (int p = 1; p <= pipelineCount; p++)
+                    {
+                        var pipelineName = $"{deploymentPipelineConfiguration.PipelineNamePrefix}-{p:D3}";
+                        Console.WriteLine($"\nCreating deployment pipeline: {pipelineName}");
+
+                        var pipelineId = await CreatePipelineAsync(pipelineName, stagesPerPipelineCount);
+                        Console.WriteLine($"✅ Created pipeline '{pipelineName}', ID = {pipelineId}");
+
+                        var pipelineStages = await GetPipelineStagesAsync(pipelineId);
+
+                        for (int s = 0; s < stagesPerPipelineCount; s++)
+                        {
+                            var stage = pipelineStages[s];
+                            var stageId = stage.Id;
+                            var workspaceId = _workspaceIds[(p - 1) * stagesPerPipelineCount + s];
+
+                            await AssignWorkspaceToStageAsync(pipelineId, stageId, workspaceId);
+                            Console.WriteLine($"   ➤ Assigned workspace {workspaceId} to stage {stage.DisplayName}");
+                        }
+                    }
                 }
             }
 
             Console.WriteLine("\nDone!");
             
             return userCertWorkspaceList;
+        }
+
+        private async Task AddUsersAsAdminsAsync(
+            HttpClient httpClient,
+            string workspaceId,
+            string workspaceName,
+            List<UserInfo> usersToAdd)
+        {
+            foreach (var userToAdd in usersToAdd)
+            {
+                var userCert = _userCertList[(userToAdd.Index - 1) % _userCertList.Count];
+                var username = userCert.UserName;
+
+                Console.WriteLine($"Adding user '{username}' as admin to workspace '{workspaceName}'");
+
+                var requestBody = new
+                {
+                    principal = new
+                    {
+                        id = userCert.UserId,
+                        type = "User"
+                    },
+                    role = userToAdd.Role
+                };
+
+                var addUserUrl = $"{_publicApiBaseUrl}/workspaces/{workspaceId}/roleAssignments";
+                await PostWithRetryAsync(httpClient, addUserUrl, requestBody);
+
+                Console.WriteLine($"User '{username}' added as {userToAdd.Role}.");
+            }
         }
 
         private async Task<string> CreatePipelineAsync(string pipelineName, int stagesCount)
@@ -297,5 +346,62 @@ namespace Scenarios
             }
         }
 
+        // This function still not working
+        public async Task<string> CreatePCapacityAndGetOidAsync(
+            string capacityName,
+            string skuName, // e.g. "P1", "P2"
+            string[] adminMembers,
+            IDictionary<string, string> tags = null)
+        {
+            var _apiVersion = "2023-11-01";
+            var _subscriptionId = "87fbaedc-8a23-4e92-b01b-ff29393b44a2";
+            var _resourceGroup = "License-Purchase-RG";
+            var _location = "westcentralus";
+            
+            var requestUrl =
+                $"https://management.azure.com/subscriptions/{_subscriptionId}/resourceGroups/{_resourceGroup}/providers/Microsoft.Fabric/capacities/{capacityName}?api-version={_apiVersion}";
+
+            var bodyObj = new
+            {
+                location = _location,
+                properties = new
+                {
+                    administration = new
+                    {
+                        members = adminMembers
+                    }
+                },
+                sku = new
+                {
+                    name = skuName,   // P capacity SKU like "P1"
+                    tier = "P"        // tier is "P" for premium capacities
+                },
+                tags = tags
+            };
+
+            var bodyJson = JsonSerializer.Serialize(bodyObj,
+                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+
+            using var content = new StringContent(bodyJson, Encoding.UTF8, "application/json");
+
+            using var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tenantAdminAccessToken);
+            var response = await httpClient.PutAsync(requestUrl, content);
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Failed to create capacity. Status={response.StatusCode}, Body={responseBody}");
+            }
+
+            // Parse JSON to extract the "id" field
+            using var doc = JsonDocument.Parse(responseBody);
+            if (doc.RootElement.TryGetProperty("id", out var idElement))
+            {
+                return idElement.GetString();
+            }
+
+            throw new Exception("Capacity created but no id found in response.");
+        }
     }
 }

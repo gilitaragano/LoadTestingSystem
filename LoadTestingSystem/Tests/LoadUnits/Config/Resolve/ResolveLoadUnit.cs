@@ -3,6 +3,7 @@ using LoadTestingSytem.Common;
 using LoadTestingSytem.Models;
 using LoadTestingSytem.Tests.LoadUnits.Config.Resolve.Actions;
 using LoadTestingSytem.Tests.Workloads.Config.Resolve.Models;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PowerBITokenGenerator;
 using Scenarios;
 using System.Linq;
@@ -29,12 +30,15 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
         private static readonly string _loadUnitName = "ResolveLoadUnit";
 
         private int _loadUnitIndex;
+        private Guid _loadUnitObjectId;
 
-        public ResolveLoadUnit(bool prepareFabricEnv, DateTime sessionStartTime, int loadUnitIndex = 0)
+        public ResolveLoadUnit(bool prepareFabricEnv, DateTime sessionStartTime, Guid? loadUnitObjectId, int loadUnitIndex = 0)
         {
+            Assert.IsTrue((prepareFabricEnv && loadUnitObjectId == null) || (!prepareFabricEnv && loadUnitObjectId != null));
             _prepareFabricEnv = prepareFabricEnv;
             _sessionStartTime = sessionStartTime;
             _loadUnitIndex = loadUnitIndex;
+            _loadUnitObjectId = loadUnitObjectId ?? Guid.NewGuid();
         }
 
         public async Task<LiveExecutionSessionRunner<ResolveResultSummary, ResolveLoadUnit>> PrepareLoadUnit(string sessionConfigFile)
@@ -51,6 +55,7 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
                 _userCertWorkspaceList = await PrepareLoadUnitFabricEnv.RunAsync(
                     _loadUnitName,
                     _loadUnitIndex,
+                    _loadUnitObjectId,
                     $"{_dirBase}Creation/ResolveLoadUnitPreparationConfiguration.json",
                     $"{_dirBase}Creation/VariableLibraryDefinitions.json",
                     userCertList);
@@ -62,6 +67,7 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
                     _tenantAdminAccessToken,
                     workspaceNamePrefix: _fabricEnvConfiguration.WorkspacesConfiguration.WorkspaceNamePrefix,
                     _loadUnitIndex,
+                    _loadUnitObjectId,
                     userCertList);
             }
 
@@ -83,6 +89,7 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
                 baseUrl: _loadTestConfig.BaseUrl,
                 _tenantAdminAccessToken,
                 _loadUnitIndex,
+                _loadUnitObjectId,
                 workspaceNamePrefix: _fabricEnvConfiguration.WorkspacesConfiguration.WorkspaceNamePrefix
             );
 
@@ -96,6 +103,7 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
                 baseUrl: _loadTestConfig.BaseUrl,
                 _tenantAdminAccessToken,
                 loadUnitIndex: _loadUnitIndex,
+                loadUnitObjectId: _loadUnitObjectId,
                 workspaceNamePrefix: _fabricEnvConfiguration.WorkspacesConfiguration.WorkspaceNamePrefix,
                 workspaceIds: _workspaceIds
             );

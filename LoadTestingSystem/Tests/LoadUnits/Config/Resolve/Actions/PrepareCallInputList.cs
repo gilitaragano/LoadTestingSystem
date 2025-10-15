@@ -26,48 +26,57 @@ namespace LoadTestingSytem.Tests.LoadUnits.Config.Resolve.Actions
             Console.WriteLine("Generating MWC tokens...");
             var mwcTokens = await MwcTokenProvider.GenerateTokensAsync(baseUrl, userCertWorkspaceTokens, capacityObjectId, consumingItemsByWorkspace);
 
+
+            // For randomization - variableNames should be dynamically set
             var variableNames = new[] { "test", "aa", "bb", "cc", "dd", "ee" };
             var resolveRequestForValidationList = new List<RequestForValidation>();
 
-            foreach (var (wsId, artifacts) in workspaceArtifacts)
+            // For randomization - randomly select which of the WS users you want to take each time
+            foreach (var userCertWorkspace in userCertWorkspaceList)
             {
-                if (!mwcTokens.TryGetValue(wsId, out var token))
+                // For randomization - randomly select which single WS of the workspaceArtifacts you want to take each time
+                foreach (var (wsId, artifacts) in workspaceArtifacts)
                 {
-                    continue;
-                }
-
-                var normalizedcapacityObjectId = Utils.NormalizeGuid(capacityObjectId);
-                var clusterBase = $"https://{normalizedcapacityObjectId}.pbidedicated.windows-int.net";
-
-                foreach (var varLib in artifacts.VariableLibraries)
-                {
-                    var url = $"{clusterBase}/webapi/capacities/{capacityObjectId}/workloads/Config/ConfigService/automatic/public/workspaces/{wsId}/items/{artifacts.ConsumingItemId}/ResolveVariableReferencesV2";
-
-                    foreach (var varName in variableNames)
+                    if (!mwcTokens.TryGetValue((wsId, userCertWorkspace.UserId), out var token))
                     {
-                        var variableReference = $"$(/**/{varLib.DisplayName}/{varName})";
+                        continue;
+                    }
 
-                        var body = new
+                    var normalizedcapacityObjectId = Utils.NormalizeGuid(capacityObjectId);
+                    var clusterBase = $"https://{normalizedcapacityObjectId}.pbidedicated.windows-int.net";
+
+                    // For randomization - randomly select the subset of artifacts.VariableLibraries you want to take each time
+                    foreach (var varLib in artifacts.VariableLibraries)
+                    {
+                        var url = $"{clusterBase}/webapi/capacities/{capacityObjectId}/workloads/Config/ConfigService/automatic/public/workspaces/{wsId}/items/{artifacts.ConsumingItemId}/ResolveVariableReferencesV2";
+
+                        // For randomization - should be the variableNames of the subset you choosed randmly before
+                        foreach (var varName in variableNames)
                         {
-                            variableReferences = new[] { variableReference }
-                        };
+                            var variableReference = $"$(/**/{varLib.DisplayName}/{varName})";
 
-                        var requestJson = JsonSerializer.Serialize(body);
+                            var body = new
+                            {
+                                variableReferences = new[] { variableReference }
+                            };
 
-                        var requestMessage = new HttpRequestMessage(HttpMethod.Post, url)
-                        {
-                            Content = new StringContent(requestJson)
-                        };
-                        requestMessage.Headers.Authorization =
-                            new AuthenticationHeaderValue("MwcToken", token);
-                        requestMessage.Content.Headers.ContentType =
-                            new MediaTypeHeaderValue("application/json");
+                            var requestJson = JsonSerializer.Serialize(body);
 
-                        resolveRequestForValidationList.Add(new RequestForValidation
-                        {
-                            HttpRequestMessage = requestMessage,
-                            HttpRequestMessageIdentifier = variableReference,
-                        });
+                            var requestMessage = new HttpRequestMessage(HttpMethod.Post, url)
+                            {
+                                Content = new StringContent(requestJson)
+                            };
+                            requestMessage.Headers.Authorization =
+                                new AuthenticationHeaderValue("MwcToken", token);
+                            requestMessage.Content.Headers.ContentType =
+                                new MediaTypeHeaderValue("application/json");
+
+                            resolveRequestForValidationList.Add(new RequestForValidation
+                            {
+                                HttpRequestMessage = requestMessage,
+                                HttpRequestMessageIdentifier = variableReference,
+                            });
+                        }
                     }
                 }
             }

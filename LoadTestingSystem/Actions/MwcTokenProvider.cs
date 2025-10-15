@@ -15,18 +15,22 @@ namespace Actions
             public string Token { get; set; } = string.Empty;
         }
 
-        public static async Task<Dictionary<string, string>> GenerateTokensAsync(
+        public static async Task<Dictionary<(string workspaceId, string userId), string>> GenerateTokensAsync(
             string baseUrl,
             List<UserCertWorkspaceToken> userCertWorkspaceTokenList,
             string capacityObjectId,
             Dictionary<string, string> consumingItemsByWorkspace)
         {
-            var result = new Dictionary<string, string>();
+            var result = new Dictionary<(string workspaceId, string userId), string>();
             var tokenEndpoint = $"{baseUrl}/metadata/v201606/generatemwctokenv2";
 
+            // For randomization - randomly select how many MWC tokens you want to have here one user among all the WS users, for now take the first
             foreach (var (workspaceId, itemId) in consumingItemsByWorkspace)
             {
-                var userCertWorkspaceToken = userCertWorkspaceTokenList.Find(ucwt => ucwt.WorkspaceId == workspaceId);
+                var FilteredUserCertWorkspaceTokenList = userCertWorkspaceTokenList.Where(ucwt => ucwt.WorkspaceIds.Contains(workspaceId)).ToList();
+
+                // For randomization - randomly select here one user among all the WS users, for now take the first
+                var userCertWorkspaceToken = FilteredUserCertWorkspaceTokenList[0];
 
                 if (userCertWorkspaceToken == null)
                 {
@@ -69,7 +73,7 @@ namespace Actions
 
                     if (!string.IsNullOrEmpty(token))
                     {
-                        result[workspaceId] = token;
+                        result[(workspaceId, userCertWorkspaceToken.UserId)] = token;
                     }
                     else
                     {

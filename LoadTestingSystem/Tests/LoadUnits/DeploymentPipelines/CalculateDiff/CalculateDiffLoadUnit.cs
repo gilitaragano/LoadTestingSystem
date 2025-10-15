@@ -15,7 +15,6 @@ namespace LoadTestingSytem.Tests.LoadUnits.DeploymentPipelines.CalculateDiff
     {
         private static List<UserCertWorkspace> _userCertWorkspaceList = null!;
 
-        private Guid _fabricLoadUnitEnvId;
         private LoadTestConfig _loadTestConfig = null!;
         private string _tenantAdminAccessToken = null!;
 
@@ -28,13 +27,14 @@ namespace LoadTestingSytem.Tests.LoadUnits.DeploymentPipelines.CalculateDiff
         private static readonly string _loadUnitName = "CalculateDiffLoadUnit";
 
         private int _loadUnitIndex;
+        private Guid _loadUnitObjectId;
 
-        public CalculateDiffLoadUnit(bool prepareFabricEnv, DateTime sessionStartTime, int loadUnitIndex = 0)
+        public CalculateDiffLoadUnit(bool prepareFabricEnv, DateTime sessionStartTime, Guid? loadUnitObjectId, int loadUnitIndex = 0)
         {
             _prepareFabricEnv = prepareFabricEnv;
             _sessionStartTime = sessionStartTime;
-            _fabricLoadUnitEnvId = Guid.NewGuid();
             _loadUnitIndex = loadUnitIndex;
+            _loadUnitObjectId = loadUnitObjectId ?? Guid.NewGuid();
         }
 
         public async Task<LiveExecutionSessionRunner<string, CalculateDiffLoadUnit>> PrepareLoadUnit(string sessionConfigFile)
@@ -48,6 +48,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.DeploymentPipelines.CalculateDiff
                 _userCertWorkspaceList = await PrepareLoadUnitFabricEnv.RunAsync(
                     _loadUnitName,
                     _loadUnitIndex,
+                    _loadUnitObjectId,
                     $"{_dirBase}Creation/CalculateDiffLoadUnitPreparationConfiguration.json",
                     $"{_dirBase}Creation/ReportDefinitions.json",
                     userCertList);
@@ -59,6 +60,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.DeploymentPipelines.CalculateDiff
                     _tenantAdminAccessToken,
                     workspaceNamePrefix: fabricEnvConfiguration.WorkspacesConfiguration.WorkspaceNamePrefix,
                     _loadUnitIndex,
+                    _loadUnitObjectId,
                     userCertList);
             }
 

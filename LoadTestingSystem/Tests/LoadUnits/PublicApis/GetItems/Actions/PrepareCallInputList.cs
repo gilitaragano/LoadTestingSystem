@@ -18,10 +18,13 @@ namespace LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems.Actions
 
             var requestForValidationList = new List<RequestForValidation>();
 
-            foreach (var userWorkspace in userCertWorkspaceTokens)
+            // For randomization - randomly select here how many calls you want to have at the end
+            // For randomization - randomly select which of the uses of userCertWorkspaceTokens you want to take each time
+            foreach (var userCertWorkspaceToken in userCertWorkspaceTokens)
             {
-                string workspaceId = userWorkspace.WorkspaceId;
-                string token = userWorkspace.AccessToken;
+                // For randomization - randomly select which WS among the WS this user belong to to take, for now take the first
+                string workspaceId = userCertWorkspaceToken.WorkspaceIds[0];
+                string token = userCertWorkspaceToken.AccessToken;
 
                 string url = $"{baseUrl}/v1/workspaces/{workspaceId}/items";
 

@@ -31,6 +31,7 @@ namespace Actions
         private MethodInfo _executeMethod;
         private readonly S _testInstance;
         private readonly int _loadUnitIndex;
+        private DateTime _lastFlushTime;
 
         public ExecutionRateController(
             S testInstance,
@@ -187,7 +188,7 @@ namespace Actions
         {
             Console.WriteLine($"Starting live execution session at {_currentRate} calls/sec");
 
-            var lastFlushTime = DateTime.UtcNow;
+            var _lastFlushTime = DateTime.UtcNow;
             var flushInterval = TimeSpan.FromSeconds(20);
             int secondCounter = 0;
             CallsRateInfo callsRateInfo = _liveSessionConfig.CallsRateInfo;
@@ -195,95 +196,38 @@ namespace Actions
 
             while (!_cancellationToken.IsCancellationRequested && (maxCallCount <= 0 || _totalCallCounter < maxCallCount))
             {
-                // Must be at start
                 var currentSecondStart = DateTime.UtcNow;
 
-                if (callsRateInfo.CallsRateUpdateMode == CallsRateUpdateMode.LinearRampUp &&
-                    callsRateInfo.LinearRampUpConfig != null)
-                {
-                    var rampConfig = callsRateInfo.LinearRampUpConfig;
-                    var timeSinceLastIncrease = DateTime.UtcNow - _lastRateIncreaseTime;
-
-                    if (timeSinceLastIncrease.TotalSeconds >= rampConfig.SecondsBetweenIncreases)
-                    {
-                        lock (_rateLock)
-                        {
-                            _currentRate += rampConfig.CallsRateIncreasePerStep;
-                        }
-
-                        _lastRateIncreaseTime = DateTime.UtcNow;
-                        Console.WriteLine($"[Rate Increased] New rate: {_currentRate} calls/sec");
-                    }
-                }
-                else if (callsRateInfo.CallsRateUpdateMode == CallsRateUpdateMode.SecondBySecond &&
-                         callsRateInfo.SecondBySecondConfig != null &&
-                         callsRateInfo.SecondBySecondConfig.Count() > 0)
-                {
-                    var secondBySecondRates = callsRateInfo.SecondBySecondConfig;
-
-                    int rateIndex = secondCounter % secondBySecondRates.Count();
-
-                    lock (_rateLock)
-                    {
-                        _currentRate = secondBySecondRates[rateIndex];
-                    }
-                }
-
-                int rateSnapshot;
-                lock (_rateLock)
-                {
-                    rateSnapshot = _currentRate;
-                }
+                // Determine _currentRate
+                int rateSnapshot = GetCurrentRateForThisSecond(secondCounter);
 
                 Console.WriteLine($"Second {secondCounter}: Dispatching {rateSnapshot} calls");
 
-                for (int i = 0; i < rateSnapshot && (_maxCallCount <= 0 || _totalCallCounter < _maxCallCount); i++)
+                // Execute calls according to mode
+                if (callsRateInfo.CallsRateUpdateMode == CallsRateUpdateMode.SecondBySecond &&
+                    callsRateInfo.SecondBySecondConfig != null &&
+                    callsRateInfo.SecondBySecondConfig.Count() > 0)
                 {
-                    lock (_requestsLock)
+                    var config = callsRateInfo.SecondBySecondConfig[secondCounter % callsRateInfo.SecondBySecondConfig.Count()];
+                    if (config.CallOffsetsMs != null && config.CallOffsetsMs.Count > 0 && config.HasValidOffsets)
                     {
-                        var originalRequest = _requests[_currentIndex % _requests.Count];
-                        _currentIndex++;
-                        _totalCallCounter++;
-
-                        var clonedRequest = CloneRequestForValidation(originalRequest);
-                        var task = ExecuteAndTrackAsync(clonedRequest);
-                        _runningTasks.Add(task);
+                        await ExecuteCallsWithOffsets(config);
                     }
-                }
-
-                if (DateTime.UtcNow - lastFlushTime >= flushInterval)
-                {
-                    _ = Task.Run(async () =>
+                    else
                     {
-                        try
-                        {
-                            await FlushResultsToFileAsync();
-                        }
-                        catch (Exception ex)
-                        {
-                            // Log or handle exceptions if needed
-                            Console.WriteLine($"Flush failed: {ex.Message}");
-                        }
-                    });
-
-                    lastFlushTime = DateTime.UtcNow;
-                }
-
-
-                // Must be at the end
-                var timeUntilNextSecond = currentSecondStart.AddSeconds(1) - DateTime.UtcNow;
-                    if (timeUntilNextSecond.TotalMilliseconds > 0)
-                {
-                    try
-                    {
-                        await Task.Delay(timeUntilNextSecond, _cancellationToken);
+                        await ExecuteCallsAsFastAsYouCan(rateSnapshot);
                     }
-                    catch (TaskCanceledException) { break; }
                 }
                 else
                 {
-                    Console.WriteLine($"[LoadTestingSystem] - ERROR - Load Testing System on second: {secondCounter} could not dispatch {rateSnapshot} calls");
+                    await ExecuteCallsAsFastAsYouCan(rateSnapshot);
                 }
+
+                // Flush if needed
+                await CheckAndFlushAsync();
+
+                // Wait until next second
+                await WaitUntilNextSecondAsync(currentSecondStart);
 
                 secondCounter++;
             }
@@ -299,6 +243,165 @@ namespace Actions
             Console.WriteLine("Execution session complete.");
         }
 
+        private async Task CheckAndFlushAsync()
+        {
+            TimeSpan flushInterval = TimeSpan.FromSeconds(20);
+
+            if (DateTime.UtcNow - _lastFlushTime >= flushInterval)
+            {
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        await FlushResultsToFileAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log or handle exceptions if needed
+                        Console.WriteLine($"Flush failed: {ex.Message}");
+                    }
+                });
+
+                _lastFlushTime = DateTime.UtcNow;
+            }
+        }
+
+        private async Task WaitUntilNextSecondAsync(DateTime currentSecondStart)
+        {
+            var timeUntilNextSecond = currentSecondStart.AddSeconds(1) - DateTime.UtcNow;
+            if (timeUntilNextSecond.TotalMilliseconds > 0)
+            {
+                try
+                {
+                    await Task.Delay(timeUntilNextSecond, _cancellationToken);
+                }
+                catch (TaskCanceledException) { }
+            }
+            else
+            {
+                Console.WriteLine("[LoadTestingSystem] - ERROR - Could not dispatch all calls in time.");
+            }
+        }
+
+
+        private int GetCurrentRateForThisSecond(int secondCounter)
+        {
+            int rateSnapshot;
+
+            switch (_liveSessionConfig.CallsRateInfo.CallsRateUpdateMode)
+            {
+                case CallsRateUpdateMode.Static:
+                    lock (_rateLock)
+                    {
+                        rateSnapshot = _currentRate;
+                    }
+                    break;
+
+                case CallsRateUpdateMode.LinearRampUp:
+                    var rampConfig = _liveSessionConfig.CallsRateInfo.LinearRampUpConfig;
+                    if (rampConfig != null)
+                    {
+                        var timeSinceLastIncrease = DateTime.UtcNow - _lastRateIncreaseTime;
+                        if (timeSinceLastIncrease.TotalSeconds >= rampConfig.SecondsBetweenIncreases)
+                        {
+                            lock (_rateLock)
+                            {
+                                _currentRate += rampConfig.CallsRateIncreasePerStep;
+                                if (_currentRate < 0) _currentRate = 0; // ensure non-negative
+                            }
+                            _lastRateIncreaseTime = DateTime.UtcNow;
+                            Console.WriteLine($"[Rate Increased] New rate: {_currentRate} calls/sec");
+                        }
+                    }
+
+                    lock (_rateLock)
+                    {
+                        rateSnapshot = _currentRate;
+                    }
+                    break;
+
+                case CallsRateUpdateMode.SecondBySecond:
+                    var secondBySecondRates = _liveSessionConfig.CallsRateInfo.SecondBySecondConfig;
+                    if (secondBySecondRates != null && secondBySecondRates.Count() > 0)
+                    {
+                        int index = secondCounter % secondBySecondRates.Count();
+                        var config = secondBySecondRates[index];
+
+                        lock (_rateLock)
+                        {
+                            _currentRate = config.CallsCount;
+                            rateSnapshot = _currentRate;
+                        }
+                    }
+                    else
+                    {
+                        lock (_rateLock)
+                        {
+                            rateSnapshot = _currentRate;
+                        }
+                    }
+                    break;
+
+                default:
+                    lock (_rateLock)
+                    {
+                        rateSnapshot = _currentRate;
+                    }
+                    break;
+            }
+
+            return rateSnapshot;
+        }
+
+        private async Task ExecuteCallsAsFastAsYouCan(int callsToExecute)
+        {
+            for (int i = 0; i < callsToExecute && (_maxCallCount <= 0 || _totalCallCounter < _maxCallCount); i++)
+            {
+                RequestForValidation request;
+                lock (_requestsLock)
+                {
+                    request = CloneRequestForValidation(_requests[_currentIndex % _requests.Count]);
+                    _currentIndex++;
+                    _totalCallCounter++;
+                }
+
+                var task = ExecuteAndTrackAsync(request);
+                _runningTasks.Add(task);
+            }
+        }
+
+        private async Task ExecuteCallsWithOffsets(SecondConfig config)
+        {
+            DateTime secondStart = DateTime.UtcNow;
+            secondStart = secondStart.AddMilliseconds(-secondStart.Millisecond).AddSeconds(1);
+
+            for (int i = 0; i < config.CallsCount && (_maxCallCount <= 0 || _totalCallCounter < _maxCallCount); i++)
+            {
+                int offsetMs = config.CallOffsetsMs![i];
+                DateTime targetTime = secondStart.AddMilliseconds(offsetMs);
+
+                RequestForValidation request;
+                lock (_requestsLock)
+                {
+                    request = CloneRequestForValidation(_requests[_currentIndex % _requests.Count]);
+                    _currentIndex++;
+                    _totalCallCounter++;
+                }
+
+                var delay = targetTime - DateTime.UtcNow;
+                if (delay.TotalMilliseconds > 0)
+                {
+                    try
+                    {
+                        await Task.Delay(delay, _cancellationToken);
+                    }
+                    catch (TaskCanceledException) { break; }
+                }
+
+                var task = ExecuteAndTrackAsync(request);
+                _runningTasks.Add(task);
+            }
+        }
 
         private static RequestForValidation CloneRequestForValidation(RequestForValidation original)
         {

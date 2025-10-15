@@ -22,7 +22,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Creation\UserCerts - Copy.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Creation\UserCerts.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Creation\UserCertsBase.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Tests\LoadUnits\Config\Resolve\Creation\ResolveLoadUnitPreparationConfiguration_arbitraryUserInfo.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Tests\LoadUnits\Config\Resolve\Validations\ResolvedVariablesForValidation.json">
