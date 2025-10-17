@@ -31,7 +31,25 @@
     <None Update="Creation\UserCertsBase.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Tests\LoadUnits\Config\Resolve\Creation\ResolveLoadUnitPreparationConfiguration_1WS_2VL_1CI.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Tests\LoadUnits\Config\Resolve\Creation\ResolveLoadUnitPreparationConfiguration_arbitraryUserInfo.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Tests\LoadUnits\Config\Resolve\ResolveLoadUnitLiveSessionConfiguration_CacheTest1.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Tests\LoadUnits\Config\Resolve\ResolveLoadUnitResolveCallsConfiguration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Tests\LoadUnits\Config\Resolve\ResolveLoadUnitResolveCallsConfiguration_CacheTest3.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Tests\LoadUnits\Config\Resolve\ResolveLoadUnitResolveCallsConfiguration_CacheTest2.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Tests\LoadUnits\Config\Resolve\ResolveLoadUnitResolveCallsConfiguration_CacheTest1.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Tests\LoadUnits\Config\Resolve\Validations\ResolvedVariablesForValidation.json">

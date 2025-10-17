@@ -1,0 +1,35 @@
+﻿{
+  "ResolveCallsInfo": {
+    "ResolveCallsPreparationMode": "Predefined",
+    "PredefinedResolveCalls": [
+      {
+        "UserIndex": 5,
+        "WorkspaceIndex": 0,
+        "PredefinedResolveReferences": [
+          {
+            "VariableLibraryName": "VariableLibrary1",
+            "VariableName": "bb"
+          },
+          {
+            "VariableLibraryName": "VariableLibrary2",
+            "VariableName": "cc"
+          }
+        ]
+      },
+      {
+        "UserIndex": 5,
+        "WorkspaceIndex": 0,
+        "PredefinedResolveReferences": [
+          {
+            "VariableLibraryName": "VariableLibrary1",
+            "VariableName": "bb"
+          },
+          {
+            "VariableLibraryName": "VariableLibrary2",
+            "VariableName": "cc"
+          }
+        ]
+      }
+    ]
+  }
+}

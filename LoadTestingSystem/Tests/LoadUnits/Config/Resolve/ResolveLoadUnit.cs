@@ -17,6 +17,7 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
 
         private LoadTestConfig _loadTestConfig = null!;
         private FabricEnvConfiguration _fabricEnvConfiguration = null!;
+        private ResolveCallsConfig _resolveCallsConfiguration = null!;
 
         private List<string> _workspaceIds = null!;
         private Dictionary<string, WorkspaceArtifact> _workspaceArtifacts = null!;
@@ -41,12 +42,13 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
             _loadUnitObjectId = loadUnitObjectId ?? Guid.NewGuid();
         }
 
-        public async Task<LiveExecutionSessionRunner<ResolveResultSummary, ResolveLoadUnit>> PrepareLoadUnit(string sessionConfigFile)
+        public async Task<LiveExecutionSessionRunner<ResolveResultSummary, ResolveLoadUnit>> PrepareLoadUnit(string sessionConfigFile, string preparationConfigFile, string resolveCallsConfigFile)
         {
             var liveSessionConfig = await Utils.LoadConfig<LiveSessionConfiguration>($"{_dirBase}{sessionConfigFile}");
             var userCertList = (await Utils.LoadConfig<List<UserCert>>("Creation/UserCerts.json")).Skip(1).ToList();
 
-            _fabricEnvConfiguration = await Utils.LoadConfig<FabricEnvConfiguration>($"{_dirBase}Creation\\ResolveLoadUnitPreparationConfiguration.json");
+            _fabricEnvConfiguration = await Utils.LoadConfig<FabricEnvConfiguration>($"{_dirBase}Creation\\{preparationConfigFile}");
+            _resolveCallsConfiguration = await Utils.LoadConfig<ResolveCallsConfig>($"{_dirBase}{resolveCallsConfigFile}");
             _loadTestConfig = await Utils.LoadConfig<LoadTestConfig>($".\\Creation\\LoadTestConfiguration.json");
             _tenantAdminAccessToken = await PowerBiCbaTokenProvider.GetTenantAdmin();
 
@@ -56,7 +58,7 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
                     _loadUnitName,
                     _loadUnitIndex,
                     _loadUnitObjectId,
-                    $"{_dirBase}Creation/ResolveLoadUnitPreparationConfiguration.json",
+                    $"{_dirBase}Creation/{preparationConfigFile}",
                     $"{_dirBase}Creation/VariableLibraryDefinitions.json",
                     userCertList);
             }
@@ -118,7 +120,8 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
                 baseUrl: _loadTestConfig.BaseUrl,
                 capacityObjectId: _fabricEnvConfiguration.WorkspacesConfiguration.CapacityObjectId,
                 workspaceArtifacts: _workspaceArtifacts,
-                userCertWorkspaceList: _userCertWorkspaceList
+                userCertWorkspaceList: _userCertWorkspaceList,
+                resolveCallsInfo: _resolveCallsConfiguration.ResolveCallsInfo
             );
 
             return _requestForValidationList;
@@ -178,7 +181,9 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
                 baseUrl: _loadTestConfig.BaseUrl,
                 capacityObjectId: _fabricEnvConfiguration.WorkspacesConfiguration.CapacityObjectId,
                 workspaceArtifacts: _workspaceArtifacts,
-                userCertWorkspaceList: _userCertWorkspaceList);
+                userCertWorkspaceList: _userCertWorkspaceList,
+                resolveCallsInfo: _resolveCallsConfiguration.ResolveCallsInfo
+                );
         }
     }
 }

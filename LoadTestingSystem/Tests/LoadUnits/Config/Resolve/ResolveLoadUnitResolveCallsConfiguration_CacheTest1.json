@@ -1,0 +1,27 @@
+﻿{
+  "ResolveCallsInfo": {
+    "ResolveCallsPreparationMode": "Predefined",
+    "PredefinedResolveCalls": [
+      {
+        "UserIndex": 5,
+        "WorkspaceIndex": 0,
+        "PredefinedResolveReferences": [
+          {
+            "VariableLibraryName": "VariableLibrary1",
+            "VariableName": "ee"
+          }
+        ]
+      },
+      {
+        "UserIndex": 5,
+        "WorkspaceIndex": 0,
+        "PredefinedResolveReferences": [
+          {
+            "VariableLibraryName": "VariableLibrary2",
+            "VariableName": "test"
+          }
+        ]
+      }
+    ]
+  }
+}

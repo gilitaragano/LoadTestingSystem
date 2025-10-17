@@ -76,16 +76,21 @@ namespace Actions
 
         public void SetRate(int newRate)
         {
-            lock (_rateLock)
+            if (_liveSessionConfig.CallsRateInfo.CallsRateUpdateMode == CallsRateUpdateMode.Static)
             {
-                _currentRate = newRate;
+                lock (_rateLock)
+                {
+                    _currentRate = newRate;
+                }
             }
         }
 
         public void SetRequests(List<RequestForValidation> newRequests)
         {
             if (newRequests == null || newRequests.Count == 0)
+            {
                 throw new ArgumentException("New request list is null or empty.");
+            }
 
             lock (_requestsLock)
             {
@@ -186,7 +191,7 @@ namespace Actions
 
         public async Task RunAsync()
         {
-            Console.WriteLine($"Starting live execution session at {_currentRate} calls/sec");
+            //Console.WriteLine($"Starting live execution session at {_currentRate} calls/sec");
 
             var _lastFlushTime = DateTime.UtcNow;
             var flushInterval = TimeSpan.FromSeconds(20);

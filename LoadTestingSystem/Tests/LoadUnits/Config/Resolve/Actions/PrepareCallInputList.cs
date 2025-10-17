@@ -2,7 +2,9 @@
 using LoadTestingSytem.Common;
 using LoadTestingSytem.Models;
 using LoadTestingSytem.Tests.Workloads.Config.Resolve.Models;
+using Newtonsoft.Json.Linq;
 using PowerBITokenGenerator;
+using System;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -14,7 +16,8 @@ namespace LoadTestingSytem.Tests.LoadUnits.Config.Resolve.Actions
             string baseUrl,
             string capacityObjectId,
             Dictionary<string, WorkspaceArtifact> workspaceArtifacts,
-            List<UserCertWorkspace> userCertWorkspaceList)
+            List<UserCertWorkspace> userCertWorkspaceList,
+            ResolveCallsInfo resolveCallsInfo)
         {
             var consumingItemsByWorkspace = workspaceArtifacts
                 .Where(kv => !string.IsNullOrEmpty(kv.Value.ConsumingItemId))
@@ -26,8 +29,100 @@ namespace LoadTestingSytem.Tests.LoadUnits.Config.Resolve.Actions
             Console.WriteLine("Generating MWC tokens...");
             var mwcTokens = await MwcTokenProvider.GenerateTokensAsync(baseUrl, userCertWorkspaceTokens, capacityObjectId, consumingItemsByWorkspace);
 
+            if (resolveCallsInfo.ResolveCallsPreparationMode == ResolveCallsPreparationMode.Predefined)
+            {
+                return GeneratePredefinedResolveCalls(
+                    resolveCallsInfo.PredefinedResolveCalls,
+                    userCertWorkspaceList,
+                    workspaceArtifacts,
+                    mwcTokens,
+                    capacityObjectId);
+            }
+            else if (resolveCallsInfo.ResolveCallsPreparationMode == ResolveCallsPreparationMode.Cartesian)
+            {
+                return GenerateCartesianResolveCalls(
+                    userCertWorkspaceList,
+                    workspaceArtifacts,
+                    mwcTokens,
+                    capacityObjectId);
+            }
+            else
+            {
+                throw new ArgumentException($"Unsupported ResolveCallsPreparationMode : {resolveCallsInfo.ResolveCallsPreparationMode}");
+            }
+        }
 
-            // For randomization - variableNames should be dynamically set
+        private static List<RequestForValidation> GeneratePredefinedResolveCalls(
+            List<PredefinedResolveCall> predefinedResolveCalls,
+            List<UserCertWorkspace> userCertWorkspaceList,
+            Dictionary<string, WorkspaceArtifact> workspaceArtifacts,
+            Dictionary<(string workspaceId, string userId), string> mwcTokens,
+            string capacityObjectId)
+        {
+            var resolveRequestForValidationList = new List<RequestForValidation>();
+
+            foreach (var predefinedResolveCall in predefinedResolveCalls)
+            {
+
+                var variableReferences = predefinedResolveCall.PredefinedResolveReferences.Select(
+                    predefinedResolveReference => $"$(/**/{predefinedResolveReference.VariableLibraryName}/{predefinedResolveReference.VariableName})");
+
+                var body = new
+                {
+                    variableReferences
+                };
+
+                var requestJson = JsonSerializer.Serialize(body);
+
+                var userIndex = predefinedResolveCall.UserIndex;
+
+                var userCertWorkspace = userCertWorkspaceList.Find(userCertWorkspace => userCertWorkspace.UserName.Contains($"User{userIndex}"));
+
+
+                if (userCertWorkspace == null)
+                {
+                    throw new ArgumentException($"User with index {userIndex} was not found");
+                }
+
+                var wsId = userCertWorkspace.WorkspaceIds[predefinedResolveCall.WorkspaceIndex];
+                var artifacts = workspaceArtifacts[wsId];
+
+                if (!mwcTokens.TryGetValue((wsId, userCertWorkspace.UserId), out var token))
+                {
+                    continue;
+                }
+
+                var normalizedcapacityObjectId = Utils.NormalizeGuid(capacityObjectId);
+                var clusterBase = $"https://{normalizedcapacityObjectId}.pbidedicated.windows-int.net";
+                var url = $"{clusterBase}/webapi/capacities/{capacityObjectId}/workloads/Config/ConfigService/automatic/public/workspaces/{wsId}/items/{artifacts.ConsumingItemId}/ResolveVariableReferencesV2";
+
+                var requestMessage = new HttpRequestMessage(HttpMethod.Post, url)
+                {
+                    Content = new StringContent(requestJson)
+                };
+
+                requestMessage.Headers.Authorization =
+                    new AuthenticationHeaderValue("MwcToken", token);
+                requestMessage.Content.Headers.ContentType =
+                    new MediaTypeHeaderValue("application/json");
+
+                resolveRequestForValidationList.Add(new RequestForValidation
+                {
+                    HttpRequestMessage = requestMessage,
+                    HttpRequestMessageIdentifier = string.Join(",", variableReferences)
+                });
+            }
+
+            return resolveRequestForValidationList;
+        }
+
+        private static List<RequestForValidation> GenerateCartesianResolveCalls(
+            List<UserCertWorkspace> userCertWorkspaceList,
+            Dictionary<string, WorkspaceArtifact> workspaceArtifacts,
+            Dictionary<(string workspaceId, string userId), string> mwcTokens,
+            string capacityObjectId)
+        {
+            //For randomization -variableNames should be dynamically set by discover call
             var variableNames = new[] { "test", "aa", "bb", "cc", "dd", "ee" };
             var resolveRequestForValidationList = new List<RequestForValidation>();
 
@@ -84,5 +179,4 @@ namespace LoadTestingSytem.Tests.LoadUnits.Config.Resolve.Actions
             return resolveRequestForValidationList;
         }
     }
-
 }

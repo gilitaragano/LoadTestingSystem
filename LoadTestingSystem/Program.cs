@@ -70,11 +70,14 @@ class Program
     static async Task Main(string[] args)
     {
         Console.WriteLine("Choose Load Test Mode:");
-        Console.WriteLine("0 - Resolve");
-        Console.WriteLine("1 - GetItems");
-        Console.WriteLine("2 - GetItemsBaseline");
-        Console.WriteLine("3 - Run Both in Parallel");
+        Console.WriteLine("0 - Load test - Resolve");
+        Console.WriteLine("1 - Load test - GetItems");
+        Console.WriteLine("2 - Load test - GetItemsBaseline");
+        Console.WriteLine("3 - Load test - Run Both in Parallel");
         Console.WriteLine("4 - Generate userCerts file");
+        Console.WriteLine("5 - Caching test - 2 resolve call: [{WS0, User5 [{$VL1/Var1}]}, {WS0, User5 [{$VL2/Var2}]}");
+        Console.WriteLine("6 - Caching test - 2 resolve call: [{WS0, User5 [{$VL1/Var3}, {$VL2/Var4}]}, {WS0, User5 [{$VL1/Var3}, {$VL2/Var4}]}");
+        Console.WriteLine("7 - Caching test - 2 resolve call: [{WS0, User5 [{$VL_NotExists/Var1}]}, {WS0, User5 [{$VL_NotExists/Var2}]}");
         Console.Write("Enter your choice:");
 
         var choice = Console.ReadLine()?.Trim();
@@ -86,9 +89,11 @@ class Program
         {
             case "0":
                 {
-                    var loadUnit = new RunnerLoadUnit<ResolveResultSummary, ResolveLoadUnit>(
-                        () => new ResolveLoadUnit(prepareFabricEnv: true, testStartTime, loadUnitObjectId: null)//loadUnitObjectId: new Guid("83a17fc8-ec95-4c38-a1ed-9a7d36a07043")
-                            .PrepareLoadUnit("ResolveLoadUnitLiveSessionConfiguration.json"));
+                    var loadUnit = CreateResolveLoadUnit(
+                        testStartTime,
+                        "ResolveLoadUnitLiveSessionConfiguration.json",
+                        "ResolveLoadUnitPreparationConfiguration.json",
+                        "ResolveLoadUnitResolveCallsConfiguration.json");
 
                     Console.WriteLine($"Running Resolve with test '{testName}'...");
                     await loadUnit.RunAsync(testName);
@@ -140,6 +145,44 @@ class Program
                     await UserCertsFileGenerator.RunAsync();
                     break;
                 }
+            case "5":
+                {
+                    var loadUnit = new RunnerLoadUnit<ResolveResultSummary, ResolveLoadUnit>(
+                        () => new ResolveLoadUnit(prepareFabricEnv: true, testStartTime, loadUnitObjectId: null)
+                            .PrepareLoadUnit(
+                                "ResolveLoadUnitLiveSessionConfiguration_CacheTest1.json",
+                                "ResolveLoadUnitPreparationConfiguration_1WS_2VL_1CI.json",
+                                "ResolveLoadUnitResolveCallsConfiguration_CacheTest1.json"));
+
+                    Console.WriteLine($"Running Resolve with test '{testName}'...");
+                    await loadUnit.RunAsync(testName);
+                    break;
+                }
+            case "6":
+                {
+                    var loadUnit = CreateResolveLoadUnit(
+                        testStartTime,
+                        "ResolveLoadUnitLiveSessionConfiguration_CacheTest1.json",
+                        "ResolveLoadUnitPreparationConfiguration_1WS_2VL_1CI.json",
+                        "ResolveLoadUnitResolveCallsConfiguration_CacheTest2.json");
+
+                    Console.WriteLine($"Running Resolve with test '{testName}'...");
+                    await loadUnit.RunAsync(testName);
+                    break;
+                }
+
+            case "7":
+                {
+                    var loadUnit = CreateResolveLoadUnit(
+                        testStartTime,
+                        "ResolveLoadUnitLiveSessionConfiguration_CacheTest1.json",
+                        "ResolveLoadUnitPreparationConfiguration_1WS_2VL_1CI.json",
+                        "ResolveLoadUnitResolveCallsConfiguration_CacheTest3.json");
+
+                    Console.WriteLine($"Running Resolve with test '{testName}'...");
+                    await loadUnit.RunAsync(testName);
+                    break;
+                }
 
             default:
                 throw new ArgumentException("Invalid choice. Please enter 1, 2, or 3.");
@@ -147,5 +190,18 @@ class Program
 
         Console.WriteLine("Execution completed. Press any key to exit.");
         Console.ReadKey();
+    }
+    private static RunnerLoadUnit<ResolveResultSummary, ResolveLoadUnit> CreateResolveLoadUnit(
+    DateTime testStartTime,
+    string liveSessionConfigFile,
+    string preparationConfigFile,
+    string resolveCallsConfigFile)
+    {
+        return new RunnerLoadUnit<ResolveResultSummary, ResolveLoadUnit>(
+            () => new ResolveLoadUnit(prepareFabricEnv: true, testStartTime, loadUnitObjectId: null)
+                .PrepareLoadUnit(
+                    liveSessionConfigFile,
+                    preparationConfigFile,
+                    resolveCallsConfigFile));
     }
 }
