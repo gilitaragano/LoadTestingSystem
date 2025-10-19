@@ -8,6 +8,7 @@ using Scenarios;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using static LoadTestingSystem.Tests.LoadUnits.CommonUtils;
 
 namespace LoadTestingSytem.Tests.LoadUnits.DeploymentPipelines.CalculateDiff
 {
@@ -37,7 +38,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.DeploymentPipelines.CalculateDiff
             _loadUnitObjectId = loadUnitObjectId ?? Guid.NewGuid();
         }
 
-        public async Task<LiveExecutionSessionRunner<string, CalculateDiffLoadUnit>> PrepareLoadUnit(string sessionConfigFile)
+        public async Task<LiveExecutionSessionRunner<NoPayload, NoPayload, CalculateDiffLoadUnit>> PrepareLoadUnit(string sessionConfigFile)
         {
             var liveSessionConfig = await Utils.LoadConfig<LiveSessionConfiguration>($"{_dirBase}{sessionConfigFile}");
             var userCertList = (await Utils.LoadConfig<List<UserCert>>("Creation/UserCerts.json")).Skip(1).ToList();
@@ -65,7 +66,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.DeploymentPipelines.CalculateDiff
             }
 
             using var cts = new CancellationTokenSource();
-            return new LiveExecutionSessionRunner<string, CalculateDiffLoadUnit>(
+            return new LiveExecutionSessionRunner<NoPayload, NoPayload, CalculateDiffLoadUnit>(
                 this,
                 _loadUnitIndex,
                 _sessionStartTime,
@@ -75,7 +76,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.DeploymentPipelines.CalculateDiff
         }
 
         [TestPreparation]
-        public async Task<List<RequestForValidation>> PrepareLoadUnitCalls()
+        public async Task<List<RequestForValidation<NoPayload>>> PrepareLoadUnitCalls()
         {
             _loadTestConfig = await Utils.LoadConfig<LoadTestConfig>($".\\Creation\\LoadTestConfiguration.json");
 
@@ -87,7 +88,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.DeploymentPipelines.CalculateDiff
         }
 
         [TestExecute]
-        public async Task<ResponseForValidation<string>> ExecuteCall(RequestForValidation requestForValidation)
+        public async Task<ResponseForValidation<string>> ExecuteCall(RequestForValidation<NoPayload> requestForValidation)
         {
 
             using var httpClient = new HttpClient();
@@ -112,25 +113,26 @@ namespace LoadTestingSytem.Tests.LoadUnits.DeploymentPipelines.CalculateDiff
         }
 
         [TestResultValidatation]
-        public async Task<ValidationSummary> ValidateCallResult(List<ResponseForValidation<string>> responsesForValidation)
+        public async Task ValidateCallResult(List<ResponseForFile<NoPayload, NoPayload>> responseForFileList)
         {
-            // Return false if any response does not have a valid status code
-            int SuccessCallsCount = responsesForValidation.Count(response => Utils.c_validStatusCodes.Contains(response.Status));
+            int failedCallsCount = responseForFileList.Count(response => !Utils.c_validStatusCodes.Contains(response.Status));
 
-            var validationSummary = new ValidationSummary()
-            {
-                SuccessCallsCount = SuccessCallsCount,
-                FailureCallsCount = responsesForValidation.Count - SuccessCallsCount
-            };
+            var successCalls = responseForFileList.Where(response => Utils.c_validStatusCodes.Contains(response.Status));
+            var successAvgDuration = successCalls.Any()
+                    ? successCalls.Average(call => call.DurationMs)
+                    : 0;
 
-            return validationSummary;
+            Console.WriteLine("\n============ Validation Summary ============");
+            Console.WriteLine($"Successes: {responseForFileList.Count() - failedCallsCount}, Avg duration: {successAvgDuration}");
+            Console.WriteLine($"FailedResolveCallsCount: {failedCallsCount}");
+            Console.WriteLine("\n============================================");
         }
 
         // TODO it should not be only for tenant admins
         // TODO it should not be only access token
         // TODO it should not be only for admin tenant
         [TestTokenExchange]
-        public async Task<List<RequestForValidation>> ExchangeAccessToken(List<RequestForValidation> responsesForValidation)
+        public async Task<List<RequestForValidation<NoPayload>>> ExchangeAccessToken(List<RequestForValidation<NoPayload>> responsesForValidation)
         {
             var newAccessToken = await PowerBiCbaTokenProvider.GetTenantAdmin();
 
@@ -151,10 +153,10 @@ namespace LoadTestingSytem.Tests.LoadUnits.DeploymentPipelines.CalculateDiff
             return responsesForValidation;
         }
 
-        private async Task<List<RequestForValidation>> BuildDiffCalculationRequestsAsync()
+        private async Task<List<RequestForValidation<NoPayload>>> BuildDiffCalculationRequestsAsync()
         {
             var workspaceArtifacts = new Dictionary<int, List<int>>();
-            var calculateDiffRequestForValidationList = new List<RequestForValidation>();
+            var calculateDiffRequestForValidationList = new List<RequestForValidation<NoPayload>>();
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tenantAdminAccessToken);
 
@@ -196,7 +198,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.DeploymentPipelines.CalculateDiff
                     requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                     requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tenantAdminAccessToken);
 
-                    calculateDiffRequestForValidationList.Add(new RequestForValidation
+                    calculateDiffRequestForValidationList.Add(new RequestForValidation<NoPayload>
                     {
                         HttpRequestMessage = requestMessage,
                         HttpRequestMessageIdentifier = $"{pipelineId}::{stageId}"

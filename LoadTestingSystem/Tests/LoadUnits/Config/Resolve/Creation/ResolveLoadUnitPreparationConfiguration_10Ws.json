@@ -1,0 +1,115 @@
+﻿{
+  "WorkspacesConfiguration": {
+    "WorkspaceNamePrefix": "ResolveUnitWs",
+    "CapacityObjectId": "0FC09335-2771-4857-8FF7-F0B9D20E2BC8",
+    "WorkspaceArtifactsByType": [
+      {
+        "Type": "VariableLibrary",
+        "Items": [
+          {
+            "Count": 1,
+            "Definition": ".\\Creation\\VariableLibraryDefinition.json"
+          },
+          {
+            "Count": 1,
+            "Definition": ".\\Creation\\VariableLibraryDefinition.json"
+          },
+          {
+            "Count": 1,
+            "Definition": ".\\Creation\\VariableLibraryDefinition.json"
+          }
+        ]
+      },
+      {
+        "Type": "Lakehouse",
+        "Items": [
+          {
+            "Count": 1
+          }
+        ]
+      }
+    ],
+    "WorkspaceDetailsList": [
+      {
+        "UserInfoList": [
+          {
+            "Index": 1,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 2,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 3,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 4,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 5,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 6,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 7,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 8,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 9,
+            "Role": "Admin"
+          }
+        ]
+      },
+      {
+        "UserInfoList": [
+          {
+            "Index": 10,
+            "Role": "Admin"
+          }
+        ]
+      }
+    ]
+  }
+}

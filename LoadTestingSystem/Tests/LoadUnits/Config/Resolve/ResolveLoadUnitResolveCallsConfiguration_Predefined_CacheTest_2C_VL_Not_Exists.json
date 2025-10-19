@@ -1,0 +1,52 @@
+﻿{
+  "ResolveCallsInfo": {
+    "ResolveCallsPreparationMode": "Predefined",
+    "PredefinedResolveCalls": [
+      {
+        "UserIndex": 5,
+        "WorkspaceIndex": 0,
+        "PredefinedResolveReferences": [
+          {
+            "VariableLibraryName": "VariableLibrary_NotExists",
+            "VariableName": "bb"
+          }
+        ],
+        "ResolveCallValidations": {
+
+          "ResultSummaryValidation": {
+            "Results": [
+              {
+                "referenceString": "$(/**/VariableLibrary_NotExists/bb)",
+                "status": "VariableLibraryNotFound",
+                "type": null,
+                "value": null
+              }
+            ]
+          }
+        }
+      },
+      {
+        "UserIndex": 5,
+        "WorkspaceIndex": 0,
+        "PredefinedResolveReferences": [
+          {
+            "VariableLibraryName": "VariableLibrary_NotExists",
+            "VariableName": "bb"
+          }
+        ],
+        "ResolveCallValidations": {
+          "ResultSummaryValidation": {
+            "Results": [
+              {
+                "referenceString": "$(/**/VariableLibrary_NotExists/bb)",
+                "status": "VariableLibraryNotFound",
+                "type": null,
+                "value": null
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

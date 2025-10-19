@@ -92,7 +92,8 @@ namespace Actions
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Failed to get a token for {p.user} with {p.certificate}");
+                    Console.WriteLine($"FAILURE: ########   Failed to get a token for {p.user} with {p.certificate}   ########");
+                    break;
                 }
 
             }

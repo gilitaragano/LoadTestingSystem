@@ -1,0 +1,11 @@
+﻿{
+  "CallsLimit": 0,
+  "CallsRateInfo": {
+    "CallsRateUpdateMode": "LinearRampUp",
+    "InitialCallsRate": 10,
+    "LinearRampUpConfig": {
+      "CallsRateIncreasePerStep": 5,
+      "SecondsBetweenIncreases": 10
+    }
+  }
+}

@@ -1,0 +1,13 @@
+﻿{
+  "CallsLimit": 4,
+  "CallsRateInfo": {
+    "CallsRateUpdateMode": "SecondBySecond",
+    "InitialCallsRate": 1,
+    "SecondBySecondConfig": [
+      {
+        "CallsCount": 4,
+        "CallOffsetsMs": [ 0, 100, 30000, 100 ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,71 @@
+﻿{
+  "ResolveCallsInfo": {
+    "ResolveCallsPreparationMode": "Predefined",
+    "PredefinedResolveCalls": [
+      {
+        "UserIndex": 5,
+        "WorkspaceIndex": 0,
+        "PredefinedResolveReferences": [
+          {
+            "VariableLibraryName": "VariableLibrary1",
+            "VariableName": "bb"
+          },
+          {
+            "VariableLibraryName": "VariableLibrary2",
+            "VariableName": "cc"
+          }
+        ],
+        "ResolveCallValidations": {
+          "ResultSummaryValidation": {
+            "Results": [
+              {
+                "referenceString": "$(/**/VariableLibrary1/bb)",
+                "status": "Ok",
+                "type": "DateTime",
+                "value": "2025-01-14T16:15:20.123Z"
+              },
+              {
+                "referenceString": "$(/**/VariableLibrary2/cc)",
+                "status": "Ok",
+                "type": "Guid",
+                "value": "0f206279-91e4-4b38-9690-1e5c13f231b5"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "UserIndex": 5,
+        "WorkspaceIndex": 0,
+        "PredefinedResolveReferences": [
+          {
+            "VariableLibraryName": "VariableLibrary1",
+            "VariableName": "bb"
+          },
+          {
+            "VariableLibraryName": "VariableLibrary2",
+            "VariableName": "cc"
+          }
+        ],
+        "ResolveCallValidations": {
+          "ResultSummaryValidation": {
+            "Results": [
+              {
+                "referenceString": "$(/**/VariableLibrary1/bb)",
+                "status": "Ok",
+                "type": "DateTime",
+                "value": "2025-01-14T16:15:20.123Z"
+              },
+              {
+                "referenceString": "$(/**/VariableLibrary2/cc)",
+                "status": "Ok",
+                "type": "Guid",
+                "value": "0f206279-91e4-4b38-9690-1e5c13f231b5"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

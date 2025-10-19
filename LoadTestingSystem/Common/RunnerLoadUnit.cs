@@ -1,12 +1,12 @@
 ﻿using LoadTestingSytem.Models;
 using Scenarios;
 
-public class RunnerLoadUnit<T, TUnit> : ILoadUnit
-    where TUnit : class
+public class RunnerLoadUnit<T, S, K> : ILoadUnit
+    where K : class
 {
-    private readonly Func<Task<LiveExecutionSessionRunner<T, TUnit>>> _prepareFunc;
+    private readonly Func<Task<LiveExecutionSessionRunner<T, S, K>>> _prepareFunc;
 
-    public RunnerLoadUnit(Func<Task<LiveExecutionSessionRunner<T, TUnit>>> prepareFunc)
+    public RunnerLoadUnit(Func<Task<LiveExecutionSessionRunner<T, S, K>>> prepareFunc)
     {
         _prepareFunc = prepareFunc;
     }

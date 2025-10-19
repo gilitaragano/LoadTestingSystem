@@ -6,7 +6,7 @@
     "SecondBySecondConfig": [
       {
         "CallsCount": 2,
-        "OffsetsMs": [ 0, 10 ]
+        "CallOffsetsMs": [ 0, 100 ]
       }
     ]
   }

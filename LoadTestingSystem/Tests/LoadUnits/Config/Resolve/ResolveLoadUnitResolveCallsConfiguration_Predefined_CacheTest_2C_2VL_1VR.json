@@ -1,0 +1,51 @@
+﻿{
+  "ResolveCallsInfo": {
+    "ResolveCallsPreparationMode": "Predefined",
+    "PredefinedResolveCalls": [
+      {
+        "UserIndex": 5,
+        "WorkspaceIndex": 0,
+        "PredefinedResolveReferences": [
+          {
+            "VariableLibraryName": "VariableLibrary1",
+            "VariableName": "ee"
+          }
+        ],
+        "ResolveCallValidations": {
+          "ResultSummaryValidation": {
+            "Results": [
+              {
+                "referenceString": "$(/**/VariableLibrary1/ee)",
+                "status": "Ok",
+                "type": "String",
+                "value": "abc"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "UserIndex": 5,
+        "WorkspaceIndex": 0,
+        "PredefinedResolveReferences": [
+          {
+            "VariableLibraryName": "VariableLibrary2",
+            "VariableName": "test"
+          }
+        ],
+        "ResolveCallValidations": {
+          "ResultSummaryValidation": {
+            "Results": [
+              {
+                "referenceString": "$(/**/VariableLibrary2/test)",
+                "status": "Ok",
+                "type": "Integer",
+                "value": 22
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

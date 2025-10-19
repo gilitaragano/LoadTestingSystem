@@ -5,20 +5,20 @@ using System.Reflection;
 
 namespace Scenarios
 {
-    public class LiveExecutionSessionRunner<T, S>
+    public class LiveExecutionSessionRunner<T, S, K>
     {
         private readonly object _resultsLock = new();
-        private readonly List<ResponseForFile<T>> _results = new();
+        private readonly List<ResponseForFile<T,S>> _results = new();
         private readonly CancellationToken _cancellationToken;
         private readonly LiveSessionConfiguration _liveSessionConfig;
         private readonly string _loadUnitName;
 
         private int _currentIndex = 0;
         private DateTime _sessionStart;
-        private List<RequestForValidation> _requests = null!;
+        private List<RequestForValidation<S>> _requests = null!;
 
-        private ExecutionRateController<T, S> _controller;
-        private readonly S _testInstance;
+        private ExecutionRateController<T, S, K> _controller;
+        private readonly K _testInstance;
         private readonly int _loadUnitIndex;
         private readonly DateTime _sessionStartTime;
 
@@ -28,7 +28,7 @@ namespace Scenarios
         private readonly MethodInfo _tokenExchangeMethod;
 
         public LiveExecutionSessionRunner(
-            S testInstance, 
+            K testInstance, 
             int loadUnitIndex, 
             DateTime sessionStartTime, 
             LiveSessionConfiguration liveSessionConfig, 
@@ -54,7 +54,7 @@ namespace Scenarios
         public async Task RunAsync(string testName)
         {
             Console.WriteLine("Initializing test data via TestPreparation...");
-            var _requests = await InvokeMethodAsync(_initMethod) as List<RequestForValidation>;
+            var _requests = await InvokeMethodAsync(_initMethod);
 
             var cts = new CancellationTokenSource();
             var token = cts.Token;
@@ -69,7 +69,7 @@ namespace Scenarios
 
                         Console.WriteLine("Refreshing request list via init method...");
                         var clonedRequests = CloneRequestList(_requests);
-                        var refreshedRequests = await InvokeMethodAsync(_tokenExchangeMethod, clonedRequests) as List<RequestForValidation>;
+                        var refreshedRequests = await InvokeMethodAsync(_tokenExchangeMethod, clonedRequests) as List<RequestForValidation<S>>;
                         if (refreshedRequests == null || refreshedRequests.Count == 0 || refreshedRequests.Count != _requests.Count)
                         {
                             Console.WriteLine("Warning: Init returned null or empty request list. Skipping update.");
@@ -90,9 +90,9 @@ namespace Scenarios
             });
 
             if (_requests.Count == 0)
-                throw new Exception("No requests found during preparation.");
+                    throw new Exception("No requests found during preparation.");
 
-            _controller = new ExecutionRateController<T, S>(
+            _controller = new ExecutionRateController<T, S, K>(
                 _testInstance,
                 _loadUnitIndex,
                 testName,
@@ -145,9 +145,9 @@ namespace Scenarios
             return ((dynamic)task).Result;
         }
 
-        public static List<RequestForValidation> CloneRequestList(List<RequestForValidation> originalList)
+        public static List<RequestForValidation<S>> CloneRequestList(List<RequestForValidation<S>> originalList)
         {
-            var cloneList = new List<RequestForValidation>();
+            var cloneList = new List<RequestForValidation<S>>();
 
             foreach (var original in originalList)
             {
@@ -172,10 +172,13 @@ namespace Scenarios
                     }
                 }
 
-                var clone = new RequestForValidation
+                var clone = new RequestForValidation<S>
                 {
                     HttpRequestMessage = clonedRequest,
-                    HttpRequestMessageIdentifier = original.HttpRequestMessageIdentifier
+                    HttpRequestMessageIdentifier = original.HttpRequestMessageIdentifier,
+                    ExpectedResultSummary = original.ExpectedResultSummary,
+                    KustoQuery = original.KustoQuery,
+                    ExpectedKustoQueryResult = original.ExpectedKustoQueryResult,
                 };
 
                 cloneList.Add(clone);

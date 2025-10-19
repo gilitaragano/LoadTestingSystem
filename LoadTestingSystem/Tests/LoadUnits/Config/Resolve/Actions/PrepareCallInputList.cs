@@ -12,7 +12,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.Config.Resolve.Actions
 {
     public static class PrepareCallInputList
     {
-        public static async Task<List<RequestForValidation>> RunAsync(
+        public static async Task<List<RequestForValidation<ResolveResultSummaryPredefined>>> RunAsync(
             string baseUrl,
             string capacityObjectId,
             Dictionary<string, WorkspaceArtifact> workspaceArtifacts,
@@ -52,14 +52,14 @@ namespace LoadTestingSytem.Tests.LoadUnits.Config.Resolve.Actions
             }
         }
 
-        private static List<RequestForValidation> GeneratePredefinedResolveCalls(
+        private static List<RequestForValidation<ResolveResultSummaryPredefined>> GeneratePredefinedResolveCalls(
             List<PredefinedResolveCall> predefinedResolveCalls,
             List<UserCertWorkspace> userCertWorkspaceList,
             Dictionary<string, WorkspaceArtifact> workspaceArtifacts,
             Dictionary<(string workspaceId, string userId), string> mwcTokens,
             string capacityObjectId)
         {
-            var resolveRequestForValidationList = new List<RequestForValidation>();
+            var resolveRequestForValidationList = new List<RequestForValidation<ResolveResultSummaryPredefined>>();
 
             foreach (var predefinedResolveCall in predefinedResolveCalls)
             {
@@ -106,17 +106,21 @@ namespace LoadTestingSytem.Tests.LoadUnits.Config.Resolve.Actions
                 requestMessage.Content.Headers.ContentType =
                     new MediaTypeHeaderValue("application/json");
 
-                resolveRequestForValidationList.Add(new RequestForValidation
+                resolveRequestForValidationList.Add(new RequestForValidation<ResolveResultSummaryPredefined>
                 {
                     HttpRequestMessage = requestMessage,
-                    HttpRequestMessageIdentifier = string.Join(",", variableReferences)
+                    HttpRequestMessageIdentifier = string.Join(",", variableReferences),
+                    ExpectedResultSummary = predefinedResolveCall.ResolveCallValidations.ResultSummaryValidation,
+                    KustoQuery = predefinedResolveCall.ResolveCallValidations.KustoQueryValidation.Query,
+                    ExpectedKustoQueryResult = predefinedResolveCall.ResolveCallValidations.KustoQueryValidation.ExpectedResult
+
                 });
             }
 
             return resolveRequestForValidationList;
         }
 
-        private static List<RequestForValidation> GenerateCartesianResolveCalls(
+        private static List<RequestForValidation<ResolveResultSummaryPredefined>> GenerateCartesianResolveCalls(
             List<UserCertWorkspace> userCertWorkspaceList,
             Dictionary<string, WorkspaceArtifact> workspaceArtifacts,
             Dictionary<(string workspaceId, string userId), string> mwcTokens,
@@ -124,7 +128,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.Config.Resolve.Actions
         {
             //For randomization -variableNames should be dynamically set by discover call
             var variableNames = new[] { "test", "aa", "bb", "cc", "dd", "ee" };
-            var resolveRequestForValidationList = new List<RequestForValidation>();
+            var resolveRequestForValidationList = new List<RequestForValidation<ResolveResultSummaryPredefined>>();
 
             // For randomization - randomly select which of the WS users you want to take each time
             foreach (var userCertWorkspace in userCertWorkspaceList)
@@ -166,7 +170,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.Config.Resolve.Actions
                             requestMessage.Content.Headers.ContentType =
                                 new MediaTypeHeaderValue("application/json");
 
-                            resolveRequestForValidationList.Add(new RequestForValidation
+                            resolveRequestForValidationList.Add(new RequestForValidation<ResolveResultSummaryPredefined>
                             {
                                 HttpRequestMessage = requestMessage,
                                 HttpRequestMessageIdentifier = variableReference,

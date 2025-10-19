@@ -3,6 +3,7 @@ using LoadTestingSytem.Common;
 using LoadTestingSytem.Models;
 using LoadTestingSytem.Tests.LoadUnits.Config.Resolve.Actions;
 using LoadTestingSytem.Tests.Workloads.Config.Resolve.Models;
+using Microsoft.PowerBI.Test.E2E.Common.NotebookRunners.Utils.KustoClient;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PowerBITokenGenerator;
 using Scenarios;
@@ -21,7 +22,7 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
 
         private List<string> _workspaceIds = null!;
         private Dictionary<string, WorkspaceArtifact> _workspaceArtifacts = null!;
-        private List<RequestForValidation> _requestForValidationList = null!;
+        private List<RequestForValidation<ResolveResultSummaryPredefined>> _requestForValidationList = null!;
         private string _tenantAdminAccessToken;
 
         private static bool _prepareFabricEnv;
@@ -42,7 +43,7 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
             _loadUnitObjectId = loadUnitObjectId ?? Guid.NewGuid();
         }
 
-        public async Task<LiveExecutionSessionRunner<ResolveResultSummary, ResolveLoadUnit>> PrepareLoadUnit(string sessionConfigFile, string preparationConfigFile, string resolveCallsConfigFile)
+        public async Task<LiveExecutionSessionRunner<ResolveResultSummary, ResolveResultSummaryPredefined, ResolveLoadUnit>> PrepareLoadUnit(string sessionConfigFile, string preparationConfigFile, string resolveCallsConfigFile)
         {
             var liveSessionConfig = await Utils.LoadConfig<LiveSessionConfiguration>($"{_dirBase}{sessionConfigFile}");
             var userCertList = (await Utils.LoadConfig<List<UserCert>>("Creation/UserCerts.json")).Skip(1).ToList();
@@ -55,7 +56,7 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
             if (_prepareFabricEnv)
             {
                 _userCertWorkspaceList = await PrepareLoadUnitFabricEnv.RunAsync(
-                    _loadUnitName,
+                    _loadUnitName,  
                     _loadUnitIndex,
                     _loadUnitObjectId,
                     $"{_dirBase}Creation/{preparationConfigFile}",
@@ -74,7 +75,7 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
             }
 
             var cts = new CancellationTokenSource();
-            return new LiveExecutionSessionRunner<ResolveResultSummary, ResolveLoadUnit>(
+            return new LiveExecutionSessionRunner<ResolveResultSummary, ResolveResultSummaryPredefined, ResolveLoadUnit>(
                 this,
                 _loadUnitIndex,
                 _sessionStartTime,
@@ -84,7 +85,7 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
         }
 
         [TestPreparation]
-        public async Task<List<RequestForValidation>> PrepareLoadUnitCalls()
+        public async Task<List<RequestForValidation<ResolveResultSummaryPredefined>>> PrepareLoadUnitCalls()
         {
             Console.WriteLine("\nStep 1: Preparing workspace ID list...");
             _workspaceIds = await PrepareWorkspaceIdList.RunAsync(
@@ -128,7 +129,7 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
         }
 
         [TestExecute]
-        public async Task<ResponseForValidation<ResolveResultSummary>> ExecuteResolveCall(RequestForValidation requestForValidation)
+        public async Task<ResponseForValidation<ResolveResultSummary>> ExecuteResolveCall(RequestForValidation<ResolveResultSummaryPredefined> requestForValidation)
         {
             using var httpClient = new HttpClient();
 
@@ -142,48 +143,50 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
 
             var res = new ResponseForValidation<ResolveResultSummary>
             {
-                RequestIdentifier = requestForValidation.HttpRequestMessageIdentifier,
                 RequestId = rootActivityId,
                 Status = (int)response.StatusCode,
                 ResultSummary = JsonSerializer.Deserialize<ResolveResultSummary>(responseBody),
-                Error = JsonSerializer.Deserialize<ErrorResponse>(responseBody)
+                Error = JsonSerializer.Deserialize<ErrorResponse>(responseBody),
             };
 
             return res;
         }
 
         [TestResultValidatation]
-        public async Task<ValidationSummary> ValidateCallResult(List<ResponseForValidation<ResolveResultSummary>> responsesForValidation)
+        public async Task ValidateCallResult(List<ResponseForFile<ResolveResultSummary, ResolveResultSummaryPredefined>> responsesForFile)
         {
-            // Return false if any response does not have a valid status code
-            int SuccessCallsCount = responsesForValidation.Count(response => Utils.c_validStatusCodes.Contains(response.Status));
+            var failedCallsCount = responsesForFile.Where(response => !Utils.c_validStatusCodes.Contains(response.Status)).Count();
 
-            if (SuccessCallsCount != responsesForValidation.Count)
-            {
-                var validationSummary = new ValidationSummary()
-                {
-                    SuccessCallsCount = SuccessCallsCount,
-                    FailureCallsCount = responsesForValidation.Count - SuccessCallsCount
-                };
+            int failedResolveSummaryValidationCount = await ResolveCallResultsSummaryValidator.RunAsync(
+                _resolveCallsConfiguration.ResolveCallsInfo,
+                _dirBase,
+                responsesForFile);
 
-                return validationSummary;
-            }
+            var resolveCallKustoQueryValidatorFailureCount = await ResolveCallKustoQueryValidator.RunAsync(
+                responsesForFile);
 
-            var validationRes = await ValidateResolveResponse.RunAsync(_dirBase, responsesForValidation.Select(res => res.ResultSummary).ToList());
+            var successCalls = responsesForFile.Where(response => Utils.c_validStatusCodes.Contains(response.Status));
+            var successAvgDuration = successCalls.Any()
+                    ? successCalls.Average(call => call.DurationMs)
+                    : 0;
 
-            return validationRes;
+            Console.WriteLine("\n============ Validation Summary ============");
+            Console.WriteLine($"Successes: {responsesForFile.Count() - failedCallsCount}, Avg duration: {successAvgDuration}");
+            Console.WriteLine($"FailedResolveCallsCount: {failedCallsCount}");
+            Console.WriteLine($"FailedResolveCallResultSummaryValidationCount: {failedResolveSummaryValidationCount}");
+            Console.WriteLine($"FailedResolveCallKustoQueryValidationCount: {resolveCallKustoQueryValidatorFailureCount}");
+            Console.WriteLine("\n============================================");
         }
 
         [TestTokenExchange]
-        public async Task<List<RequestForValidation>> ExchangeAccessToken(List<RequestForValidation> responsesForValidation)
+        public async Task<List<RequestForValidation<ResolveResultSummaryPredefined>>> ExchangeAccessToken(List<RequestForValidation<ResolveResultSummaryPredefined>> responsesForValidation)
         {
             return await PrepareCallInputList.RunAsync(
                 baseUrl: _loadTestConfig.BaseUrl,
                 capacityObjectId: _fabricEnvConfiguration.WorkspacesConfiguration.CapacityObjectId,
                 workspaceArtifacts: _workspaceArtifacts,
                 userCertWorkspaceList: _userCertWorkspaceList,
-                resolveCallsInfo: _resolveCallsConfiguration.ResolveCallsInfo
-                );
+                resolveCallsInfo: _resolveCallsConfiguration.ResolveCallsInfo);
         }
     }
 }

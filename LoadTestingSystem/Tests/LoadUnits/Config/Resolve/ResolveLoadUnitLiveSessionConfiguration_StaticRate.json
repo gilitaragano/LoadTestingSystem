@@ -2,6 +2,6 @@
   "CallsLimit": 0,
   "CallsRateInfo": {
     "CallsRateUpdateMode": "Static",
-    "InitialCallsRate": 1
+    "InitialCallsRate": 10
   }
 }

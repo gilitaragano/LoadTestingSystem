@@ -3,6 +3,9 @@ using LoadTestingSytem.Models;
 using LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems;
 using LoadTestingSytem.Tests.Workloads.Config.Resolve;
 using LoadTestingSytem.Tests.Workloads.Config.Resolve.Models;
+using System.Reflection.PortableExecutable;
+using static LoadTestingSystem.Tests.LoadUnits.CommonUtils;
+using static System.Net.Mime.MediaTypeNames;
 
 //class Program
 //{
@@ -70,30 +73,35 @@ class Program
     static async Task Main(string[] args)
     {
         Console.WriteLine("Choose Load Test Mode:");
-        Console.WriteLine("0 - Load test - Resolve");
-        Console.WriteLine("1 - Load test - GetItems");
-        Console.WriteLine("2 - Load test - GetItemsBaseline");
-        Console.WriteLine("3 - Load test - Run Both in Parallel");
-        Console.WriteLine("4 - Generate userCerts file");
-        Console.WriteLine("5 - Caching test - 2 resolve call: [{WS0, User5 [{$VL1/Var1}]}, {WS0, User5 [{$VL2/Var2}]}");
-        Console.WriteLine("6 - Caching test - 2 resolve call: [{WS0, User5 [{$VL1/Var3}, {$VL2/Var4}]}, {WS0, User5 [{$VL1/Var3}, {$VL2/Var4}]}");
-        Console.WriteLine("7 - Caching test - 2 resolve call: [{WS0, User5 [{$VL_NotExists/Var1}]}, {WS0, User5 [{$VL_NotExists/Var2}]}");
+        Console.WriteLine("0 - Load test - Resolve static rate, initial 50 RPS");
+        Console.WriteLine("1 - Load test - Resolve linear, initial 10 RPS, increase by 5 each 10 seconds");
+        Console.WriteLine("2 - Load test - Resolve second by second, 5 calls per seconds [ 100, 300, 400, 800, 900 ]");
+        Console.WriteLine("3 - Load test - GetItems");
+        Console.WriteLine("4 - Load test - GetItemsBaseline");
+        Console.WriteLine("5 - Load test - Run Both in Parallel");
+        Console.WriteLine("6 - Generate userCerts file");
+        Console.WriteLine("7 - Caching test - 2 resolve call: [{WS0, User5 [{$VL1/Var1}]}, {WS0, User5 [{$VL2/Var2}]}");
+        Console.WriteLine("8 - Caching test - 2 resolve call: [{WS0, User5 [{$VL1/Var3}, {$VL2/Var4}]}, {WS0, User5 [{$VL1/Var3}, {$VL2/Var4}]}");
+        Console.WriteLine("9 - Caching test - 2 resolve call: [{WS0, User5 [{$VL_NotExists/Var1}]}, {WS0, User5 [{$VL_NotExists/Var2}]}");
+        Console.WriteLine("10 - Caching test - 2 resolve call: [{WS0, User5 [{$VL1/Var1}]}, {WS0, User5 [{$VL1/Var1}]}");
+        Console.WriteLine("11 - Caching test - 2 resolve call with 4 min delay between each call: [{WS0, User5 [{$VL1/Var1}]}, {WS0, User5 [{$VL1/Var1}]}");
         Console.Write("Enter your choice:");
 
         var choice = Console.ReadLine()?.Trim();
 
-        string testName = "Test_GetItemsUponBaseline";
         var testStartTime = DateTime.UtcNow;
 
         switch (choice)
         {
             case "0":
                 {
+                    string testName = "LoadTest_ResolveCalls_SaticRate";
+
                     var loadUnit = CreateResolveLoadUnit(
                         testStartTime,
-                        "ResolveLoadUnitLiveSessionConfiguration.json",
-                        "ResolveLoadUnitPreparationConfiguration.json",
-                        "ResolveLoadUnitResolveCallsConfiguration.json");
+                        "ResolveLoadUnitLiveSessionConfiguration_StaticRate.json",
+                        "ResolveLoadUnitPreparationConfiguration_10Ws.json",
+                        "ResolveLoadUnitResolveCallsConfiguration_CartesianPreparation.json");
 
                     Console.WriteLine($"Running Resolve with test '{testName}'...");
                     await loadUnit.RunAsync(testName);
@@ -101,7 +109,36 @@ class Program
                 }
             case "1":
                 {
-                    var loadUnit = new RunnerLoadUnit<string, GetItemsLoadUnit>(
+                    string testName = "LoadTest_ResolveCalls_LinearIncreaseRate";
+
+                    var loadUnit = CreateResolveLoadUnit(
+                        testStartTime,
+                        "ResolveLoadUnitLiveSessionConfiguration_LinearRateIncrease.json",
+                        "ResolveLoadUnitPreparationConfiguration_10Ws.json",
+                        "ResolveLoadUnitResolveCallsConfiguration_CartesianPreparation.json");
+
+                    Console.WriteLine($"Running Resolve with test '{testName}'...");
+                    await loadUnit.RunAsync(testName);
+                    break;
+                }
+            case "2":
+                {
+                    string testName = "LoadTest_ResolveCalls_SecondBySecondRate";
+
+                    var loadUnit = CreateResolveLoadUnit(
+                        testStartTime,
+                        "ResolveLoadUnitLiveSessionConfiguration_SecondBySecondCallsRate.json",
+                        "ResolveLoadUnitPreparationConfiguration_2Ws.json",
+                        "ResolveLoadUnitResolveCallsConfiguration_CartesianPreparation.json");
+
+                    Console.WriteLine($"Running Resolve with test '{testName}'...");
+                    await loadUnit.RunAsync(testName);
+                    break;
+                }
+            case "3":
+                {
+                    string testName = "Load test - GetItems";
+                    var loadUnit = new RunnerLoadUnit<NoPayload, NoPayload, GetItemsLoadUnit>(
                         () => new GetItemsLoadUnit(prepareFabricEnv: true, testStartTime, loadUnitObjectId: null)
                             .PrepareLoadUnit("GetItemsLoadUnitLiveSessionConfiguration.json"));
 
@@ -110,9 +147,11 @@ class Program
                     break;
                 }
 
-            case "2":
+            case "4":
                 {
-                    var loadUnit = new RunnerLoadUnit<string, GetItemsLoadUnit>(
+
+                    string testName = "Load test - GetItemsBaseline";
+                    var loadUnit = new RunnerLoadUnit<NoPayload, NoPayload, GetItemsLoadUnit>(
                         () => new GetItemsLoadUnit(prepareFabricEnv: true, testStartTime, loadUnitObjectId: null)
                             .PrepareLoadUnit("GetItemsLoadUnitLiveSessionBaselineConfiguration.json"));
 
@@ -121,13 +160,15 @@ class Program
                     break;
                 }
 
-            case "3":
+            case "5":
                 {
-                    var loadUnit1 = new RunnerLoadUnit<string, GetItemsLoadUnit>(
+                    string testName = "Load test - Run Both in Parallel";
+
+                    var loadUnit1 = new RunnerLoadUnit<NoPayload, NoPayload, GetItemsLoadUnit>(
                         () => new GetItemsLoadUnit(prepareFabricEnv: true, testStartTime, loadUnitObjectId: null)
                             .PrepareLoadUnit("GetItemsLoadUnitLiveSessionConfiguration.json"));
 
-                    var loadUnit2 = new RunnerLoadUnit<string, GetItemsLoadUnit>(
+                    var loadUnit2 = new RunnerLoadUnit<NoPayload, NoPayload, GetItemsLoadUnit>(
                         () => new GetItemsLoadUnit(prepareFabricEnv: true, testStartTime, loadUnitObjectId: null)
                             .PrepareLoadUnit("GetItemsLoadUnitLiveSessionBaselineConfiguration.json"));
 
@@ -140,47 +181,85 @@ class Program
                     break;
                 }
 
-            case "4":
+            case "6":
                 {
                     await UserCertsFileGenerator.RunAsync();
                     break;
                 }
-            case "5":
-                {
-                    var loadUnit = new RunnerLoadUnit<ResolveResultSummary, ResolveLoadUnit>(
-                        () => new ResolveLoadUnit(prepareFabricEnv: true, testStartTime, loadUnitObjectId: null)
-                            .PrepareLoadUnit(
-                                "ResolveLoadUnitLiveSessionConfiguration_CacheTest1.json",
-                                "ResolveLoadUnitPreparationConfiguration_1WS_2VL_1CI.json",
-                                "ResolveLoadUnitResolveCallsConfiguration_CacheTest1.json"));
-
-                    Console.WriteLine($"Running Resolve with test '{testName}'...");
-                    await loadUnit.RunAsync(testName);
-                    break;
-                }
-            case "6":
-                {
-                    var loadUnit = CreateResolveLoadUnit(
-                        testStartTime,
-                        "ResolveLoadUnitLiveSessionConfiguration_CacheTest1.json",
-                        "ResolveLoadUnitPreparationConfiguration_1WS_2VL_1CI.json",
-                        "ResolveLoadUnitResolveCallsConfiguration_CacheTest2.json");
-
-                    Console.WriteLine($"Running Resolve with test '{testName}'...");
-                    await loadUnit.RunAsync(testName);
-                    break;
-                }
-
             case "7":
                 {
-                    var loadUnit = CreateResolveLoadUnit(
-                        testStartTime,
-                        "ResolveLoadUnitLiveSessionConfiguration_CacheTest1.json",
-                        "ResolveLoadUnitPreparationConfiguration_1WS_2VL_1CI.json",
-                        "ResolveLoadUnitResolveCallsConfiguration_CacheTest3.json");
+                    string testName = "CachingTest_2ResolveCalls_1VarRef";
+
+                    var loadUnit = new RunnerLoadUnit<ResolveResultSummary, ResolveResultSummaryPredefined, ResolveLoadUnit>(
+                        () => new ResolveLoadUnit(prepareFabricEnv: true, testStartTime, loadUnitObjectId: null)
+                            .PrepareLoadUnit(
+                                "ResolveLoadUnitLiveSessionConfiguration_2C_1Sec.json",
+                                "ResolveLoadUnitPreparationConfiguration_1WS_2VL_1CI.json",
+                                "ResolveLoadUnitResolveCallsConfiguration_Predefined_CacheTest_2C_2VL_1VR.json"));
 
                     Console.WriteLine($"Running Resolve with test '{testName}'...");
                     await loadUnit.RunAsync(testName);
+                    break;
+                }
+            case "8":
+                {
+                    string testName = "CachingTest_2ResolveCalls_2VarRef";
+
+                    var loadUnit = CreateResolveLoadUnit(
+                        testStartTime,
+                        "ResolveLoadUnitLiveSessionConfiguration_2C_1Sec.json",
+                        "ResolveLoadUnitPreparationConfiguration_1WS_2VL_1CI.json",
+                        "ResolveLoadUnitResolveCallsConfiguration_Predefined_CacheTest_2C_2VL_2VR.json");
+
+                    Console.WriteLine($"Running Resolve with test '{testName}'...");
+                    await loadUnit.RunAsync(testName);
+                    break;
+                }
+
+            case "9":
+                {
+                    string testName = "CachingTest_2ResolveCalls_VarlibNotExists";
+
+                    var loadUnit = CreateResolveLoadUnit(
+                        testStartTime,
+                        "ResolveLoadUnitLiveSessionConfiguration_2C_1Sec.json",
+                        "ResolveLoadUnitPreparationConfiguration_1WS_2VL_1CI.json",
+                        "ResolveLoadUnitResolveCallsConfiguration_Predefined_CacheTest_2C_VL_Not_Exists.json");
+
+                    Console.WriteLine($"Running Resolve with test '{testName}'...");
+                    await loadUnit.RunAsync(testName);
+                    break;
+                }
+
+            case "10":
+                {
+                    string testName = "CachingTest_2ResolveCalls_IncludeKustoQueryValidation";
+
+                    var loadUnit = CreateResolveLoadUnit(
+                        testStartTime,
+                        "ResolveLoadUnitLiveSessionConfiguration_1C_1Sec.json",
+                        "ResolveLoadUnitPreparationConfiguration_1WS_2VL_1CI.json",
+                        "ResolveLoadUnitResolveCallsConfiguration_Predefined_CacheTest_1C_1VL_1VR_KustoValidation.json");
+
+                    Console.WriteLine($"Running Resolve with test '{testName}'...");
+                    await loadUnit.RunAsync(testName);
+                    break;
+                }
+
+            case "11":
+                {
+                    string testName = "CachingTest_2ResolveCalls_MissAndHit";
+
+                    var loadUnit = CreateResolveLoadUnit(
+                        testStartTime,
+                        "ResolveLoadUnitLiveSessionConfiguration_2C_1Sec_3MinDelay_2C_1Sec.json",
+                        "ResolveLoadUnitPreparationConfiguration_1WS_2VL_1CI.json",
+                        "ResolveLoadUnitResolveCallsConfiguration_Predefined_CacheTest_1C_1VL_1VR.json");
+
+                    Console.WriteLine($"Running Resolve with test '{testName}'...");
+                    await loadUnit.RunAsync(testName);
+                    break;
+
                     break;
                 }
 
@@ -191,13 +270,13 @@ class Program
         Console.WriteLine("Execution completed. Press any key to exit.");
         Console.ReadKey();
     }
-    private static RunnerLoadUnit<ResolveResultSummary, ResolveLoadUnit> CreateResolveLoadUnit(
+    private static RunnerLoadUnit<ResolveResultSummary, ResolveResultSummaryPredefined, ResolveLoadUnit> CreateResolveLoadUnit(
     DateTime testStartTime,
     string liveSessionConfigFile,
     string preparationConfigFile,
     string resolveCallsConfigFile)
     {
-        return new RunnerLoadUnit<ResolveResultSummary, ResolveLoadUnit>(
+        return new RunnerLoadUnit<ResolveResultSummary, ResolveResultSummaryPredefined, ResolveLoadUnit>(
             () => new ResolveLoadUnit(prepareFabricEnv: true, testStartTime, loadUnitObjectId: null)
                 .PrepareLoadUnit(
                     liveSessionConfigFile,

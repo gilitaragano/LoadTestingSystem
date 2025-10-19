@@ -10,17 +10,19 @@
             "VariableLibraryName": "VariableLibrary1",
             "VariableName": "ee"
           }
-        ]
-      },
-      {
-        "UserIndex": 5,
-        "WorkspaceIndex": 0,
-        "PredefinedResolveReferences": [
-          {
-            "VariableLibraryName": "VariableLibrary2",
-            "VariableName": "test"
+        ],
+        "ResolveCallValidations": {
+          "ResultSummaryValidation": {
+            "Results": [
+              {
+                "referenceString": "$(/**/VariableLibrary1/ee)",
+                "status": "Ok",
+                "type": "String",
+                "value": "abc"
+              }
+            ]
           }
-        ]
+        }
       }
     ]
   }

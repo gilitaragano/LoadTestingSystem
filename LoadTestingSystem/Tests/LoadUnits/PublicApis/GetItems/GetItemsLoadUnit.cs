@@ -7,6 +7,7 @@ using PowerBITokenGenerator;
 using Scenarios;
 using System.Linq;
 using System.Net.Http.Headers;
+using static LoadTestingSystem.Tests.LoadUnits.CommonUtils;
 
 namespace LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems
 {
@@ -18,7 +19,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems
         private static List<UserCertWorkspace> _userCertWorkspaceList = null!;
 
         private readonly HttpClient _client = new HttpClient();
-        private List<RequestForValidation> _requestForValidationList = null!;
+        private List<RequestForValidation<NoPayload>> _requestForValidationList = null!;
 
         private static bool _prepareFabricEnv;
         private static DateTime _sessionStartTime;
@@ -38,7 +39,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems
             _loadUnitObjectId = loadUnitObjectId ?? Guid.NewGuid();
         }
 
-        public async Task<LiveExecutionSessionRunner<string, GetItemsLoadUnit>> PrepareLoadUnit(string sessionConfigFile)
+        public async Task<LiveExecutionSessionRunner<NoPayload, NoPayload, GetItemsLoadUnit>> PrepareLoadUnit(string sessionConfigFile)
         {
             var liveSessionConfig = await Utils.LoadConfig<LiveSessionConfiguration>($"{_dirBase}{sessionConfigFile}");
             var userCertList = (await Utils.LoadConfig<List<UserCert>>("Creation/UserCerts.json")).Skip(1).ToList();
@@ -67,7 +68,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems
             }
 
             using var cts = new CancellationTokenSource();
-            return new LiveExecutionSessionRunner<string, GetItemsLoadUnit>(
+            return new LiveExecutionSessionRunner<NoPayload, NoPayload, GetItemsLoadUnit>(
                 this,
                 _loadUnitIndex,
                 _sessionStartTime,
@@ -77,7 +78,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems
         }
 
         [TestPreparation]
-        public async Task<List<RequestForValidation>> PrepareLoadUnitCalls()
+        public async Task<List<RequestForValidation<NoPayload>>> PrepareLoadUnitCalls()
         {
             _loadTestConfig = await Utils.LoadConfig<LoadTestConfig>($".\\Creation\\LoadTestConfiguration.json");
 
@@ -89,7 +90,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems
         }
 
         [TestExecute]
-        public async Task<ResponseForValidation<string>> ExecuteCall(RequestForValidation requestForValidation)
+        public async Task<ResponseForValidation<string>> ExecuteCall(RequestForValidation<NoPayload> requestForValidation)
         {
 
             using var httpClient = new HttpClient();
@@ -114,22 +115,23 @@ namespace LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems
         }
 
         [TestResultValidatation]
-        public async Task<ValidationSummary> ValidateCallResult(List<ResponseForValidation<string>> responsesForValidation)
+        public async Task ValidateCallResult(List<ResponseForFile<NoPayload, NoPayload>> responseForFileList)
         {
-            // Return false if any response does not have a valid status code
-            int SuccessCallsCount = responsesForValidation.Count(response => Utils.c_validStatusCodes.Contains(response.Status));
+            int failedCallsCount = responseForFileList.Count(response => !Utils.c_validStatusCodes.Contains(response.Status));
 
-            var validationSummary = new ValidationSummary()
-            {
-                SuccessCallsCount = SuccessCallsCount,
-                FailureCallsCount = responsesForValidation.Count - SuccessCallsCount
-            };
+            var successCalls = responseForFileList.Where(response => Utils.c_validStatusCodes.Contains(response.Status));
+            var successAvgDuration = successCalls.Any()
+                    ? successCalls.Average(call => call.DurationMs)
+                    : 0;
 
-            return validationSummary;
+            Console.WriteLine("\n============ Validation Summary ============");
+            Console.WriteLine($"Successes: {responseForFileList.Count() - failedCallsCount}, Avg duration: {successAvgDuration}");
+            Console.WriteLine($"FailedResolveCallsCount: {failedCallsCount}");
+            Console.WriteLine("\n============================================");
         }
 
         [TestTokenExchange]
-        public async Task<List<RequestForValidation>> ExchangeAccessToken(List<RequestForValidation> responsesForValidation)
+        public async Task<List<RequestForValidation<NoPayload>>> ExchangeAccessToken(List<RequestForValidation<NoPayload>> responsesForValidation)
         {
             Console.WriteLine("\nExchangeAccessToken prepare new set of GetItmes calls for execution phase...");
             return await PrepareCallInputList.RunAsync(
@@ -137,7 +139,7 @@ namespace LoadTestingSytem.Tests.LoadUnits.PublicApis.GetItems
                 userCertWorkspaceList: _userCertWorkspaceList);
         }
 
-        private async Task<List<RequestForValidation>> BuildGetItemsRequestsAsync()
+        private async Task<List<RequestForValidation<NoPayload>>> BuildGetItemsRequestsAsync()
         {
             _loadTestConfig = await Utils.LoadConfig<LoadTestConfig>($".\\Creation\\LoadTestConfiguration.json");
 

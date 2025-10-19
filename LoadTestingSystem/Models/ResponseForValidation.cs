@@ -19,12 +19,4 @@ namespace LoadTestingSytem.Models
         [JsonPropertyName("error")]
         public ErrorResponse? Error { get; set; }
     }
-
-    public class ValidationSummary
-    {
-        public int SuccessCallsCount { get; set; }
-
-        public int FailureCallsCount { get; set; }
-    }
-
 }

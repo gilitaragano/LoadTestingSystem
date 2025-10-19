@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using LoadTestingSytem.Models;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace LoadTestingSytem.Tests.Workloads.Config.Resolve.Models
@@ -28,11 +29,19 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve.Models
         public int WorkspaceIndex { get; set; }
 
         public List<PredefinedResolveReference> PredefinedResolveReferences { get; set; } = new();
+        public ResolveCallValidations ResolveCallValidations { get; set; } = new();
     }
 
     public class PredefinedResolveReference
     {
         public string VariableLibraryName { get; set; } = string.Empty;
         public string VariableName { get; set; } = string.Empty;
+    }
+
+    public class ResolveCallValidations
+    {
+        public ExpectedKustoQueryValidation KustoQueryValidation { get; set; } = new();
+
+        public ResolveResultSummaryPredefined ResultSummaryValidation { get; set; } = new();
     }
 }

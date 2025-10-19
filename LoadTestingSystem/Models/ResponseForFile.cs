@@ -2,7 +2,7 @@
 
 namespace LoadTestingSytem.Models
 {
-    public class ResponseForFile<T> : ResponseForValidation<T>
+    public class ResponseForFile<T, S> : ResponseForValidation<T>
     {
         [JsonPropertyName("startedAt")]
         public DateTime StartedAt { get; set; }
@@ -12,5 +12,17 @@ namespace LoadTestingSytem.Models
 
         [JsonPropertyName("durationMs")]
         public double DurationMs { get; set; }
+        [JsonPropertyName("expectedResultSummary")]
+        public S? ExpectedResultSummary { get; set; }
+
+        [JsonPropertyName("kustoQueryValidation")]
+        public ExpectedKustoQueryValidation? ExpectedKustoQueryValidation { get; set; } = new();
+    }
+
+    public class ExpectedKustoQueryValidation
+    {
+        public string Query { get; set; } = string.Empty;
+
+        public string ExpectedResult { get; set; } = string.Empty;
     }
 }

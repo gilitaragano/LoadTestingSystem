@@ -7,10 +7,10 @@ using System.Text.Json;
 
 namespace Actions
 {
-    public class ExecutionRateController<T, S>
+    public class ExecutionRateController<T, S, K>
     {
-        private readonly List<RequestForValidation> _requests;
-        private readonly ConcurrentBag<ResponseForFile<T>> _results = new();
+        private readonly List<RequestForValidation<S>> _requests;
+        private readonly ConcurrentBag<ResponseForFile<T, S>> _results = new();
 
         private readonly int _maxCallCount;
         private int _currentRate;
@@ -29,17 +29,17 @@ namespace Actions
 
         private MethodInfo _validateMethod;
         private MethodInfo _executeMethod;
-        private readonly S _testInstance;
+        private readonly K _testInstance;
         private readonly int _loadUnitIndex;
         private DateTime _lastFlushTime;
 
         public ExecutionRateController(
-            S testInstance,
+            K testInstance,
             int loadUnitIndex,
             string testName,
             string loadUnitName,
             DateTime sessionStartTime,
-            List<RequestForValidation> requests,
+            List<RequestForValidation<S>> requests,
             LiveSessionConfiguration liveSessionConfig,
             MethodInfo executeMethod,
             MethodInfo validateMethod,
@@ -85,7 +85,7 @@ namespace Actions
             }
         }
 
-        public void SetRequests(List<RequestForValidation> newRequests)
+        public void SetRequests(List<RequestForValidation<S>> newRequests)
         {
             if (newRequests == null || newRequests.Count == 0)
             {
@@ -107,7 +107,7 @@ namespace Actions
             return Path.Combine(_sessionFolderPath, $"ExecutionResults_{now}.json");
         }
 
-        private async Task ExecuteAndTrackAsync(RequestForValidation request)
+        private async Task ExecuteAndTrackAsync(RequestForValidation<S> request)
         {
             var startedAt = DateTime.UtcNow;
             var stopwatch = Stopwatch.StartNew();
@@ -117,16 +117,24 @@ namespace Actions
             stopwatch.Stop();
             var finishedAt = DateTime.UtcNow;
 
-            var result = new ResponseForFile<T>
+            var result = new ResponseForFile<T, S>
             {
                 StartedAt = startedAt,
                 FinishedAt = finishedAt,
                 DurationMs = stopwatch.Elapsed.TotalMilliseconds,
-                RequestIdentifier = request.HttpRequestMessageIdentifier,
+
                 Status = (int)response.Status,
                 RequestId = (string)response.RequestId,
                 ResultSummary = (T)response.ResultSummary,
-                Error = (ErrorResponse)response.Error
+                Error = (ErrorResponse)response.Error,
+
+                RequestIdentifier = request.HttpRequestMessageIdentifier,
+
+                ExpectedKustoQueryValidation = {
+                    Query = request.KustoQuery,
+                    ExpectedResult = request.ExpectedKustoQueryResult
+                },
+                ExpectedResultSummary = request.ExpectedResultSummary,
             };
 
             _results.Add(result);
@@ -134,7 +142,7 @@ namespace Actions
 
         private async Task FlushResultsToFileAsync()
         {
-            List<ResponseForFile<T>> responseForFileList;
+            List<ResponseForFile<T, S>> responseForFileList;
 
             lock (_flushLock)
             {
@@ -159,22 +167,8 @@ namespace Actions
 
             try
             {
-                var responseForValidationList = responseForFileList.Cast<ResponseForValidation<T>>().ToList();
-                ValidationSummary validationSummary = await InvokeMethodAsync(_validateMethod, responseForValidationList.ToList());
+                await InvokeMethodAsync(_validateMethod, responseForFileList.ToList());
 
-                var successCalls = responseForFileList.Where(response => Utils.c_validStatusCodes.Contains(response.Status));
-                var failedCalls = responseForFileList.Where(response => !Utils.c_validStatusCodes.Contains(response.Status));
-
-                var successAvgDuration = successCalls.Any()
-                        ? successCalls.Average(call => call.DurationMs)
-                        : 0;
-                var failureAvgDuration = failedCalls.Any()
-                        ? failedCalls.Average(call => call.DurationMs)
-                        : 0;
-                Console.WriteLine("\n============ Validation Summary ============");
-                Console.WriteLine($"Successes: {successCalls.Count()}, Avg duration: {successAvgDuration}");
-                Console.WriteLine($"Failures: {failedCalls.Count()}, Avg duration: {failureAvgDuration}");
-                Console.WriteLine($"FailedValidation: {validationSummary.FailureCallsCount}");
             }
             catch (Exception ex)
             {
@@ -214,25 +208,22 @@ namespace Actions
                     callsRateInfo.SecondBySecondConfig.Count() > 0)
                 {
                     var config = callsRateInfo.SecondBySecondConfig[secondCounter % callsRateInfo.SecondBySecondConfig.Count()];
-                    if (config.CallOffsetsMs != null && config.CallOffsetsMs.Count > 0 && config.HasValidOffsets)
+                    if (config.HasValidOffsets)
                     {
                         await ExecuteCallsWithOffsets(config);
                     }
                     else
                     {
-                        await ExecuteCallsAsFastAsYouCan(rateSnapshot);
+                        await ExecuteCallsAsFastAsYouCan(rateSnapshot, currentSecondStart);
                     }
                 }
                 else
                 {
-                    await ExecuteCallsAsFastAsYouCan(rateSnapshot);
+                    await ExecuteCallsAsFastAsYouCan(rateSnapshot, currentSecondStart);
                 }
 
                 // Flush if needed
                 await CheckAndFlushAsync();
-
-                // Wait until next second
-                await WaitUntilNextSecondAsync(currentSecondStart);
 
                 secondCounter++;
             }
@@ -273,7 +264,8 @@ namespace Actions
 
         private async Task WaitUntilNextSecondAsync(DateTime currentSecondStart)
         {
-            var timeUntilNextSecond = currentSecondStart.AddSeconds(1) - DateTime.UtcNow;
+            var now = DateTime.UtcNow;
+            var timeUntilNextSecond = currentSecondStart.AddSeconds(1) - now;
             if (timeUntilNextSecond.TotalMilliseconds > 0)
             {
                 try
@@ -284,7 +276,7 @@ namespace Actions
             }
             else
             {
-                Console.WriteLine("[LoadTestingSystem] - ERROR - Could not dispatch all calls in time.");
+                Console.WriteLine($"[LoadTestingSystem] - ERROR - Could not dispatch all calls in time. timeUntilNextSecond: {timeUntilNextSecond}, currentSecondStart: {currentSecondStart}, currentSecondStart.AddSeconds(1): {currentSecondStart.AddSeconds(1)}");
             }
         }
 
@@ -358,11 +350,11 @@ namespace Actions
             return rateSnapshot;
         }
 
-        private async Task ExecuteCallsAsFastAsYouCan(int callsToExecute)
+        private async Task ExecuteCallsAsFastAsYouCan(int callsToExecute, DateTime currentSecondStart)
         {
             for (int i = 0; i < callsToExecute && (_maxCallCount <= 0 || _totalCallCounter < _maxCallCount); i++)
             {
-                RequestForValidation request;
+                RequestForValidation<S> request;
                 lock (_requestsLock)
                 {
                     request = CloneRequestForValidation(_requests[_currentIndex % _requests.Count]);
@@ -373,6 +365,9 @@ namespace Actions
                 var task = ExecuteAndTrackAsync(request);
                 _runningTasks.Add(task);
             }
+
+            // Wait until next second
+            await WaitUntilNextSecondAsync(currentSecondStart);
         }
 
         private async Task ExecuteCallsWithOffsets(SecondConfig config)
@@ -385,7 +380,7 @@ namespace Actions
                 int offsetMs = config.CallOffsetsMs![i];
                 DateTime targetTime = secondStart.AddMilliseconds(offsetMs);
 
-                RequestForValidation request;
+                RequestForValidation<S> request;
                 lock (_requestsLock)
                 {
                     request = CloneRequestForValidation(_requests[_currentIndex % _requests.Count]);
@@ -408,7 +403,7 @@ namespace Actions
             }
         }
 
-        private static RequestForValidation CloneRequestForValidation(RequestForValidation original)
+        private static RequestForValidation<S> CloneRequestForValidation(RequestForValidation<S> original)
         {
             var originalRequest = original.HttpRequestMessage;
 
@@ -437,10 +432,13 @@ namespace Actions
                 clonedRequest.Headers.TryAddWithoutValidation(header.Key, header.Value);
             }
 
-            return new RequestForValidation
+            return new RequestForValidation<S>
             {
                 HttpRequestMessage = clonedRequest,
-                HttpRequestMessageIdentifier = original.HttpRequestMessageIdentifier
+                HttpRequestMessageIdentifier = original.HttpRequestMessageIdentifier,
+                ExpectedResultSummary = original.ExpectedResultSummary,
+                KustoQuery = original.KustoQuery,
+                ExpectedKustoQueryResult= original.ExpectedKustoQueryResult,
             };
         }
     }
