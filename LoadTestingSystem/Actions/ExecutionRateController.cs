@@ -1,5 +1,4 @@
-﻿using LoadTestingSytem.Common;
-using LoadTestingSytem.Models;
+﻿using LoadTestingSytem.Models;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reflection;
@@ -112,7 +111,7 @@ namespace Actions
             var startedAt = DateTime.UtcNow;
             var stopwatch = Stopwatch.StartNew();
 
-            var response = await InvokeMethodAsync(_executeMethod, request);
+            var response = await InvokeMethodAsync<ResponseForValidation<T>>(_executeMethod, request);
 
             stopwatch.Stop();
             var finishedAt = DateTime.UtcNow;
@@ -167,7 +166,7 @@ namespace Actions
 
             try
             {
-                await InvokeMethodAsync(_validateMethod, responseForFileList.ToList());
+                await InvokeMethodAsync<object>(_validateMethod, responseForFileList.ToList());
 
             }
             catch (Exception ex)
@@ -176,11 +175,20 @@ namespace Actions
             }
         }
 
-        private async Task<dynamic> InvokeMethodAsync(MethodInfo method, params object[]? parameters)
+        private async Task<T> InvokeMethodAsync<T>(MethodInfo method, params object[]? parameters)
         {
             var task = (Task)method.Invoke(_testInstance, parameters)!;
             await task.ConfigureAwait(false);
-            return ((dynamic)task).Result;
+
+            // For Task<T>, get the Result property
+            var resultProperty = task.GetType().GetProperty("Result");
+            if (resultProperty != null)
+            {
+                return (T)resultProperty.GetValue(task)!;
+            }
+
+            // If Task returns void, return default
+            return default!;
         }
 
         public async Task RunAsync()

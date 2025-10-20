@@ -3,11 +3,9 @@ using LoadTestingSytem.Common;
 using LoadTestingSytem.Models;
 using LoadTestingSytem.Tests.LoadUnits.Config.Resolve.Actions;
 using LoadTestingSytem.Tests.Workloads.Config.Resolve.Models;
-using Microsoft.PowerBI.Test.E2E.Common.NotebookRunners.Utils.KustoClient;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PowerBITokenGenerator;
 using Scenarios;
-using System.Linq;
 using System.Text.Json;
 
 namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
@@ -19,6 +17,7 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
         private LoadTestConfig _loadTestConfig = null!;
         private FabricEnvConfiguration _fabricEnvConfiguration = null!;
         private ResolveCallsConfig _resolveCallsConfiguration = null!;
+        private readonly HttpClient _client = new HttpClient();
 
         private List<string> _workspaceIds = null!;
         private Dictionary<string, WorkspaceArtifact> _workspaceArtifacts = null!;
@@ -131,9 +130,17 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
         [TestExecute]
         public async Task<ResponseForValidation<ResolveResultSummary>> ExecuteResolveCall(RequestForValidation<ResolveResultSummaryPredefined> requestForValidation)
         {
-            using var httpClient = new HttpClient();
+            HttpResponseMessage response;
 
-            var response = await httpClient.SendAsync(requestForValidation.HttpRequestMessage);
+            try
+            {
+                response = await _client.SendAsync(requestForValidation.HttpRequestMessage);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERROR IN SendAsync: " + ex);
+                throw;
+            }
 
             string rootActivityId = response.Headers.TryGetValues("x-ms-root-activity-id", out var headerValues)
                 ? headerValues.FirstOrDefault() ?? string.Empty

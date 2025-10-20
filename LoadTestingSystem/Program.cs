@@ -97,11 +97,12 @@ class Program
                 {
                     string testName = "LoadTest_ResolveCalls_SaticRate";
 
-                    var loadUnit = CreateResolveLoadUnit(
-                        testStartTime,
-                        "ResolveLoadUnitLiveSessionConfiguration_StaticRate.json",
-                        "ResolveLoadUnitPreparationConfiguration_10Ws.json",
-                        "ResolveLoadUnitResolveCallsConfiguration_CartesianPreparation.json");
+                    var loadUnit = new RunnerLoadUnit<ResolveResultSummary, ResolveResultSummaryPredefined, ResolveLoadUnit>(
+                        () => new ResolveLoadUnit(prepareFabricEnv: true, testStartTime, loadUnitObjectId: null) // loadUnitObjectId: new Guid("24adfab5-6aae-4793-8761-9290f294361b")
+                            .PrepareLoadUnit(
+                                "ResolveLoadUnitLiveSessionConfiguration_StaticRate.json",
+                                "ResolveLoadUnitPreparationConfiguration_10Ws.json",
+                                "ResolveLoadUnitResolveCallsConfiguration_CartesianPreparation.json"));
 
                     Console.WriteLine($"Running Resolve with test '{testName}'...");
                     await loadUnit.RunAsync(testName);
@@ -248,7 +249,7 @@ class Program
 
             case "11":
                 {
-                    string testName = "CachingTest_2ResolveCalls_MissAndHit";
+                    string testName = "CachingTest_2ResolveCalls_LongDelayBetween";
 
                     var loadUnit = CreateResolveLoadUnit(
                         testStartTime,

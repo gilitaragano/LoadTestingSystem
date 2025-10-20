@@ -1,5 +1,6 @@
 ﻿using LoadTestingSystem.Models;
 using LoadTestingSytem.Models;
+using PowerBITokenGenerator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,8 +78,8 @@ namespace LoadTestingSystem.Scenarios
 
             foreach (var wsId in workspaceIds)
             {
-                var url = $"{baseUrl}/v1/workspaces/{wsId}/roleAssignments";
-                var response = await httpClient.GetAsync(url);
+                var response = await GetWithRetryAsync(httpClient, $"{baseUrl}/v1/workspaces/{wsId}/roleAssignments", tenantAdminAccessToken);
+
                 response.EnsureSuccessStatusCode();
 
                 var json = await response.Content.ReadAsStringAsync();
@@ -119,6 +120,41 @@ namespace LoadTestingSystem.Scenarios
             }
 
             return result;
+        }
+
+        private static async Task<HttpResponseMessage> GetWithRetryAsync(HttpClient client, string url, string tenantAdminAccessToken)
+        {
+            while (true)
+            {
+                // Update the Authorization header before each request with the current token
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tenantAdminAccessToken);
+
+                var response = await client.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                    return response;
+
+                if ((int)response.StatusCode == 429 && response.Headers.TryGetValues("Retry-After", out var retryAfterValues))
+                {
+                    var retryAfter = int.TryParse(retryAfterValues.FirstOrDefault(), out var delay) ? delay : 5;
+                    Console.WriteLine($"429 received. Retrying after {retryAfter} seconds...");
+                    await Task.Delay(TimeSpan.FromSeconds(retryAfter));
+                }
+                else if ((int)response.StatusCode == 401 &&
+                         response.Headers.TryGetValues("x-ms-public-api-error-code", out var errorCodeValues) &&
+                         errorCodeValues.FirstOrDefault()?.Equals("TokenExpired", StringComparison.OrdinalIgnoreCase) == true)
+                {
+                    Console.WriteLine($"401 Unauthorized with TokenExpired. Creating new access token for tenant admin user...");
+                    tenantAdminAccessToken = await PowerBiCbaTokenProvider.GetTenantAdmin();
+                    // Authorization header will be updated on next iteration
+                }
+                else
+                {
+                    // TODO fix the name conflicts that happens over and over
+                    var error = await response.Content.ReadAsStringAsync();
+                    throw new HttpRequestException($"Request failed: {response.StatusCode} {error}");
+                }
+            }
         }
     }
 }
