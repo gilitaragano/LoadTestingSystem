@@ -92,9 +92,6 @@
     <None Update="Creation\LoadTestConfiguration.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Tests\LoadUnits\Config\Resolve\ResolveLoadUnitLiveSessionConfiguration.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Tests\LoadUnits\DeploymentPipelines\CalculateDiff\Creation\CalculateDiffLoadUnitPreparationConfiguration.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

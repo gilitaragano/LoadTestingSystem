@@ -193,47 +193,38 @@ namespace Actions
 
         public async Task RunAsync()
         {
-            //Console.WriteLine($"Starting live execution session at {_currentRate} calls/sec");
-
             var _lastFlushTime = DateTime.UtcNow;
             var flushInterval = TimeSpan.FromSeconds(20);
             int secondCounter = 0;
             CallsRateInfo callsRateInfo = _liveSessionConfig.CallsRateInfo;
             int maxCallCount = _liveSessionConfig.CallsLimit;
 
-            while (!_cancellationToken.IsCancellationRequested && (maxCallCount <= 0 || _totalCallCounter < maxCallCount))
+            if (callsRateInfo.CallsRateUpdateMode == CallsRateUpdateMode.DelayBetweenCalls && callsRateInfo.DelayBetweenCallsConfig != null)
             {
                 var currentSecondStart = DateTime.UtcNow;
 
-                // Determine _currentRate
-                int rateSnapshot = GetCurrentRateForThisSecond(secondCounter);
-
-                Console.WriteLine($"Second {secondCounter}: Dispatching {rateSnapshot} calls");
-
-                // Execute calls according to mode
-                if (callsRateInfo.CallsRateUpdateMode == CallsRateUpdateMode.SecondBySecond &&
-                    callsRateInfo.SecondBySecondConfig != null &&
-                    callsRateInfo.SecondBySecondConfig.Count() > 0)
+                await ExecuteCallsWithDelays(callsRateInfo.DelayBetweenCallsConfig.CallDelaysInMs);
+            }
+            else
+            {
+                while (!_cancellationToken.IsCancellationRequested && (maxCallCount <= 0 || _totalCallCounter < maxCallCount))
                 {
-                    var config = callsRateInfo.SecondBySecondConfig[secondCounter % callsRateInfo.SecondBySecondConfig.Count()];
-                    if (config.HasValidOffsets)
-                    {
-                        await ExecuteCallsWithOffsets(config);
-                    }
-                    else
-                    {
-                        await ExecuteCallsAsFastAsYouCan(rateSnapshot, currentSecondStart);
-                    }
-                }
-                else
-                {
+                    var currentSecondStart = DateTime.UtcNow;
+
+                    int rateSnapshot = GetCurrentRateForThisSecond(secondCounter);
+
+                    Console.WriteLine($"Second {secondCounter}: Dispatching {rateSnapshot} calls");
+
                     await ExecuteCallsAsFastAsYouCan(rateSnapshot, currentSecondStart);
+
+                    // Flush if needed
+                    await CheckAndFlushAsync();
+
+                    // Wait until next second
+                    await WaitUntilNextSecondAsync(currentSecondStart);
+
+                    secondCounter++;
                 }
-
-                // Flush if needed
-                await CheckAndFlushAsync();
-
-                secondCounter++;
             }
 
             Console.WriteLine("Waiting for all remaining calls to finish...");
@@ -291,7 +282,7 @@ namespace Actions
 
         private int GetCurrentRateForThisSecond(int secondCounter)
         {
-            int rateSnapshot;
+            int rateSnapshot = 7; // default
 
             switch (_liveSessionConfig.CallsRateInfo.CallsRateUpdateMode)
             {
@@ -319,48 +310,28 @@ namespace Actions
                         }
                     }
 
-                    lock (_rateLock)
-                    {
-                        rateSnapshot = _currentRate;
-                    }
+                    rateSnapshot = _currentRate;
                     break;
 
                 case CallsRateUpdateMode.SecondBySecond:
-                    var secondBySecondRates = _liveSessionConfig.CallsRateInfo.SecondBySecondConfig;
+                    var secondBySecondRates = _liveSessionConfig.CallsRateInfo.SecondBySecondConfig.CallsCountPerSecond;
                     if (secondBySecondRates != null && secondBySecondRates.Count() > 0)
                     {
                         int index = secondCounter % secondBySecondRates.Count();
-                        var config = secondBySecondRates[index];
-
-                        lock (_rateLock)
-                        {
-                            _currentRate = config.CallsCount;
-                            rateSnapshot = _currentRate;
-                        }
-                    }
-                    else
-                    {
-                        lock (_rateLock)
-                        {
-                            rateSnapshot = _currentRate;
-                        }
+                        rateSnapshot = secondBySecondRates[index];
                     }
                     break;
 
                 default:
-                    lock (_rateLock)
-                    {
-                        rateSnapshot = _currentRate;
-                    }
                     break;
             }
 
             return rateSnapshot;
         }
 
-        private async Task ExecuteCallsAsFastAsYouCan(int callsToExecute, DateTime currentSecondStart)
+        private async Task ExecuteCallsAsFastAsYouCan(int callsCount, DateTime currentSecondStart)
         {
-            for (int i = 0; i < callsToExecute && (_maxCallCount <= 0 || _totalCallCounter < _maxCallCount); i++)
+            for (int i = 0; i < callsCount && (_maxCallCount <= 0 || _totalCallCounter < _maxCallCount); i++)
             {
                 RequestForValidation<S> request;
                 lock (_requestsLock)
@@ -373,20 +344,15 @@ namespace Actions
                 var task = ExecuteAndTrackAsync(request);
                 _runningTasks.Add(task);
             }
-
-            // Wait until next second
-            await WaitUntilNextSecondAsync(currentSecondStart);
         }
 
-        private async Task ExecuteCallsWithOffsets(SecondConfig config)
+        private async Task  ExecuteCallsWithDelays(List<int> delays)
         {
-            DateTime secondStart = DateTime.UtcNow;
-            secondStart = secondStart.AddMilliseconds(-secondStart.Millisecond).AddSeconds(1);
-
-            for (int i = 0; i < config.CallsCount && (_maxCallCount <= 0 || _totalCallCounter < _maxCallCount); i++)
+            for (int i = 0; i < delays.Count && (_maxCallCount <= 0 || _totalCallCounter < _maxCallCount); i++)
             {
-                int offsetMs = config.CallOffsetsMs![i];
-                DateTime targetTime = secondStart.AddMilliseconds(offsetMs);
+                var secondStart = DateTime.UtcNow;
+                int delaysMs = delays[i];
+                DateTime targetTime = secondStart.AddMilliseconds(delaysMs);
 
                 RequestForValidation<S> request;
                 lock (_requestsLock)

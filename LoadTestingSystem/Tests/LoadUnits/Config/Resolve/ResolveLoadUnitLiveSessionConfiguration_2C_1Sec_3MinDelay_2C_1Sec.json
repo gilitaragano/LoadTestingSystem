@@ -1,13 +1,10 @@
 ﻿{
   "CallsLimit": 4,
   "CallsRateInfo": {
-    "CallsRateUpdateMode": "SecondBySecond",
+    "CallsRateUpdateMode": "DelayBetweenCalls",
     "InitialCallsRate": 1,
-    "SecondBySecondConfig": [
-      {
-        "CallsCount": 4,
-        "CallOffsetsMs": [ 0, 100, 30000, 100 ]
-      }
-    ]
+    "DelayBetweenCallsConfig": {
+      "CallDelaysInMs": [ 0, 100, 30000, 200 ]
+    }
   }
 }

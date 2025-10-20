@@ -106,11 +106,8 @@ namespace Scenarios
 
             var runTask = _controller.RunAsync();
 
-            Console.WriteLine("You can type a new rate during execution (e.g. '20') or 'exit' to stop.");
-
             while (!runTask.IsCompleted)
             {
-                Console.WriteLine($"Current calls per second: {_controller.CurrentRate}. Enter new rate or 'exit': ");
                 var input = Console.ReadLine();
 
                 if (input?.Trim().ToLower() == "exit")

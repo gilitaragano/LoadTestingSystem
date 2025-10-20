@@ -177,12 +177,12 @@ namespace LoadTestingSytem.Tests.Workloads.Config.Resolve
                     ? successCalls.Average(call => call.DurationMs)
                     : 0;
 
-            Console.WriteLine("\n============ Validation Summary ============");
+            Console.WriteLine("\n=============== Validation Summary ===============");
             Console.WriteLine($"Successes: {responsesForFile.Count() - failedCallsCount}, Avg duration: {successAvgDuration}");
             Console.WriteLine($"FailedResolveCallsCount: {failedCallsCount}");
             Console.WriteLine($"FailedResolveCallResultSummaryValidationCount: {failedResolveSummaryValidationCount}");
             Console.WriteLine($"FailedResolveCallKustoQueryValidationCount: {resolveCallKustoQueryValidatorFailureCount}");
-            Console.WriteLine("\n============================================");
+            Console.WriteLine("====================================================");
         }
 
         [TestTokenExchange]

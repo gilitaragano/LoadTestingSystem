@@ -75,7 +75,7 @@ class Program
         Console.WriteLine("Choose Load Test Mode:");
         Console.WriteLine("0 - Load test - Resolve static rate, initial 50 RPS");
         Console.WriteLine("1 - Load test - Resolve linear, initial 10 RPS, increase by 5 each 10 seconds");
-        Console.WriteLine("2 - Load test - Resolve second by second, 5 calls per seconds [ 100, 300, 400, 800, 900 ]");
+        Console.WriteLine("2 - Load test - Resolve second by second, 5 calls per seconds [ 10, 30, 40, 100, 30, 30, 20 ]");
         Console.WriteLine("3 - Load test - GetItems");
         Console.WriteLine("4 - Load test - GetItemsBaseline");
         Console.WriteLine("5 - Load test - Run Both in Parallel");
@@ -83,7 +83,7 @@ class Program
         Console.WriteLine("7 - Caching test - 2 resolve call: [{WS0, User5 [{$VL1/Var1}]}, {WS0, User5 [{$VL2/Var2}]}");
         Console.WriteLine("8 - Caching test - 2 resolve call: [{WS0, User5 [{$VL1/Var3}, {$VL2/Var4}]}, {WS0, User5 [{$VL1/Var3}, {$VL2/Var4}]}");
         Console.WriteLine("9 - Caching test - 2 resolve call: [{WS0, User5 [{$VL_NotExists/Var1}]}, {WS0, User5 [{$VL_NotExists/Var2}]}");
-        Console.WriteLine("10 - Caching test - 2 resolve call: [{WS0, User5 [{$VL1/Var1}]}, {WS0, User5 [{$VL1/Var1}]}");
+        Console.WriteLine("10 - Caching test - 2 resolve call with kusto query validation: [{WS0, User5 [{$VL1/Var1}]}, {WS0, User5 [{$VL1/Var1}]}");
         Console.WriteLine("11 - Caching test - 2 resolve call with 4 min delay between each call: [{WS0, User5 [{$VL1/Var1}]}, {WS0, User5 [{$VL1/Var1}]}");
         Console.Write("Enter your choice:");
 
@@ -129,7 +129,7 @@ class Program
                     var loadUnit = CreateResolveLoadUnit(
                         testStartTime,
                         "ResolveLoadUnitLiveSessionConfiguration_SecondBySecondCallsRate.json",
-                        "ResolveLoadUnitPreparationConfiguration_2Ws.json",
+                        "ResolveLoadUnitPreparationConfiguration_10Ws.json",
                         "ResolveLoadUnitResolveCallsConfiguration_CartesianPreparation.json");
 
                     Console.WriteLine($"Running Resolve with test '{testName}'...");
@@ -259,8 +259,6 @@ class Program
 
                     Console.WriteLine($"Running Resolve with test '{testName}'...");
                     await loadUnit.RunAsync(testName);
-                    break;
-
                     break;
                 }
 

@@ -13,7 +13,7 @@
         ],
         "ResolveCallValidations": {
           "KustoQueryValidation": {
-            "Query": "ASTrace\n| where PreciseTimeStamp > ago(20m)\n| where RootActivityId == '{1}'\n| where MessageText has 'ResolveVariableReferencesV2Async: finished resolving variable references for workspace'\n| project MessageText",
+            "Query": "ASTrace\n| where PreciseTimeStamp > ago({0}m)\n| where RootActivityId == '{1}'\n| where MessageText has 'ResolveVariableReferencesV2Async: finished resolving variable references for workspace'\n| project MessageText",
             "ExpectedResult": "ResolveVariableReferencesV2Async: finished resolving variable references for workspace"
           },
           "ResultSummaryValidation": {

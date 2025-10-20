@@ -41,7 +41,7 @@ public static class ResolveCallKustoQueryValidator
             bool ok =
                 expected is not null &&
                 actual is not null &&
-                expected.Contains(actual, StringComparison.OrdinalIgnoreCase);
+                actual.Contains(expected, StringComparison.OrdinalIgnoreCase);
 
             if (!ok)
             {
